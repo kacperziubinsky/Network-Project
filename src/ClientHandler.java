@@ -1,13 +1,11 @@
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler extends Thread {
     private Socket clientSocket;
     private BufferedReader input;
     private DataOutputStream output;
+    private String username = null;
 
     public ClientHandler(Socket socket) throws IOException {
         this.clientSocket = socket;
@@ -31,7 +29,13 @@ public class ClientHandler extends Thread {
                         handleLogin(parts);
                         break;
                     case "logout":
-                        handleLogout(parts);
+                        handleLogout();
+                        break;
+                    case "add_post":
+                        handleAddPost(message);
+                        break;
+                    case "view_posts":
+                        handleViewPosts();
                         break;
                     default:
                         output.writeBytes("Unknown command.\n");
@@ -82,23 +86,40 @@ public class ClientHandler extends Thread {
             output.writeBytes("You are already logged in.\n");
         } else {
             Server.loggedInUsers.put(username, true);
+            this.username = username;
             output.writeBytes("Login successful!\n");
         }
     }
 
-    private void handleLogout(String[] parts) throws IOException {
-        if (parts.length != 2) {
-            output.writeBytes("Invalid logout format. Please enter: <username>\n");
-            return;
-        }
-        String username = parts[1];
-
-        if (!Server.loggedInUsers.containsKey(username) || !Server.loggedInUsers.get(username)) {
+    private void handleLogout() throws IOException {
+        if (username == null || !Server.loggedInUsers.containsKey(username) || !Server.loggedInUsers.get(username)) {
             output.writeBytes("You are not logged in.\n");
         } else {
             Server.loggedInUsers.put(username, false);
             output.writeBytes("Logout successful!\n");
+            username = null;
         }
     }
 
+    private void handleAddPost(String message) throws IOException {
+        if (username != null && message.split(" ").length >= 2) {
+            String postContent = message.substring(message.indexOf(' ') + 1);
+            Server.posts.add(username + ": " + postContent);
+            output.writeBytes("Post added.\n");
+        } else {
+            output.writeBytes("You need to be logged in to add a post.\n");
+        }
+    }
+
+    private void handleViewPosts() throws IOException {
+        if (!Server.posts.isEmpty()) {
+            for (String post : Server.posts) {
+                output.writeBytes(post + "\n");
+            }
+            output.writeBytes("END\n"); // Wysyłanie znacznika końca
+        } else {
+            output.writeBytes("No posts to display.\n");
+            output.writeBytes("END\n"); // Wysyłanie znacznika końca
+        }
+    }
 }

@@ -3,18 +3,16 @@ import java.net.*;
 import java.util.concurrent.*;
 
 public class Client {
-    private static String loggedInUser = null; // Zmienna do przechowywania zalogowanego użytkownika
-    private static String currentUsername = null; // Zmienna do przechowywania aktualnego użytkownika podczas logowania
+    private static String loggedInUser = null;
+    private static String currentUsername = null;
 
     public static void main(String args[]) throws Exception {
         BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
-        Socket clientSocket = new Socket("localhost", 2137);  // Połączenie z serwerem na localhost
+        Socket clientSocket = new Socket("localhost", 2137);
         DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
         BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
         String command;
-
-        // Utwórz ExecutorService, który pozwala ustawić timeout na odczyt odpowiedzi z serwera
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         try {
@@ -25,9 +23,10 @@ public class Client {
                 System.out.println("2. Zaloguj");
                 System.out.println("3. Wyloguj");
                 System.out.println("4. Status");
+                System.out.println("5. Dodaj post");
+                System.out.println("6. Wyświetl posty");
                 System.out.println("Type 'exit' to quit.");
 
-                // Odczytaj komendę od użytkownika
                 command = userInput.readLine();
 
                 if (command.equalsIgnoreCase("exit")) {
@@ -35,7 +34,6 @@ public class Client {
                     break;
                 }
 
-                // Obsługuje komendę rejestracji
                 if (command.equals("1")) {
                     System.out.println("Enter username and password (format: <username> <password>):");
                     String[] parts = userInput.readLine().split(" ");
@@ -46,9 +44,7 @@ public class Client {
                     String username = parts[0];
                     String password = parts[1];
                     serverOutput.writeBytes("register " + username + " " + password + '\n');
-                }
-                // Obsługuje komendę logowania
-                else if (command.equals("2")) {
+                } else if (command.equals("2")) {
                     System.out.println("Enter username and password (format: <username> <password>):");
                     String[] parts = userInput.readLine().split(" ");
                     if (parts.length != 2) {
@@ -57,41 +53,56 @@ public class Client {
                     }
                     String username = parts[0];
                     String password = parts[1];
-                    currentUsername = username; // Store the username for later use
+                    currentUsername = username;
                     serverOutput.writeBytes("login " + username + " " + password + '\n');
-                }
-                // Obsługuje komendę wylogowania
-                else if (command.equals("3")) {
+                } else if (command.equals("3")) {
                     if (loggedInUser != null) {
                         serverOutput.writeBytes("logout " + loggedInUser + '\n');
                     } else {
                         System.out.println("You are not logged in.");
                         continue;
                     }
-                }
-                // Obsługuje komendę statusu
-                else if (command.equals("4")) {
+                } else if (command.equals("4")) {
                     if (loggedInUser != null) {
                         System.out.println("You are logged in as: " + loggedInUser);
                     } else {
                         System.out.println("You are not logged in.");
                     }
                     continue;
+                } else if (command.equals("5")) {
+                    if (loggedInUser != null) {
+                        System.out.println("Enter post content:");
+                        String postContent = userInput.readLine();
+                        serverOutput.writeBytes("add_post " + postContent + '\n');
+                    } else {
+                        System.out.println("You need to be logged in to add a post.");
+                    }
+                    continue;
+                } else if (command.equals("6")) {
+                    if (loggedInUser != null) {
+                        serverOutput.writeBytes("view_posts" + '\n');
+
+                        // Pobieranie i wyświetlanie postów
+                        String response;
+                        while (!(response = serverInput.readLine()).equals("END")) {
+                            System.out.println("Post: " + response);
+                        }
+                    } else {
+                        System.out.println("You need to be logged in to view posts.");
+                    }
+                    continue;
                 }
 
-
-                // Użycie executor do odbierania odpowiedzi z serwera z timeoutem
                 Future<String> futureResponse = executor.submit(() -> {
                     try {
-                        return serverInput.readLine(); // Czekaj na odpowiedź od serwera
+                        return serverInput.readLine();
                     } catch (IOException e) {
                         return null;
                     }
                 });
 
                 try {
-                    // Oczekiwanie na odpowiedź z serwera z maksymalnym czasem oczekiwania
-                    String response = futureResponse.get(10, TimeUnit.SECONDS); // Zwiększamy timeout do 10 sekund
+                    String response = futureResponse.get(10, TimeUnit.SECONDS);
 
                     if (response == null) {
                         System.out.println("Server did not respond in time.");
@@ -100,20 +111,18 @@ public class Client {
 
                     System.out.println("Server Response: " + response);
 
-                    // Jeśli użytkownik się zalogował, zapisujemy jego nazwę
-                    if (command.equals("2")) {  // Logowanie
+                    if (command.equals("2")) {
                         if (response.equals("Login successful!")) {
-                            loggedInUser = currentUsername;  // Przechowujemy nazwę użytkownika
+                            loggedInUser = currentUsername;
                             System.out.println("You are now logged in as: " + loggedInUser);
                         } else {
-                            loggedInUser = null;  // Jeśli logowanie nieudane, resetujemy zmienną
+                            loggedInUser = null;
                         }
                     }
 
-                    // Jeśli użytkownik się wylogował, resetujemy zmienną loggedInUser
-                    if (command.equals("3")) {  // Wylogowanie
+                    if (command.equals("3")) {
                         if (response.equals("Logout successful!")) {
-                            loggedInUser = null;  // Resetujemy zalogowanego użytkownika
+                            loggedInUser = null;
                             System.out.println("You have been logged out.");
                         } else {
                             System.out.println("Logout failed: " + response);
@@ -128,7 +137,6 @@ public class Client {
         } catch (IOException e) {
             System.out.println("Error during communication with the server: " + e.getMessage());
         } finally {
-            // Zamknięcie połączenia z serwerem
             try {
                 if (clientSocket != null && !clientSocket.isClosed()) {
                     clientSocket.close();
