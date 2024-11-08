@@ -9,7 +9,7 @@ public class Main {
     public static void main(String args[]) throws Exception {
         ServerSocket serverSocket = new ServerSocket(2137);
 
-        System.out.println("Server started...");
+        System.out.println("Server ruszyl..");
 
         while (true) {
             Socket clientSocket = serverSocket.accept();
