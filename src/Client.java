@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 import java.util.concurrent.*;
 
 public class Client {
@@ -24,7 +25,9 @@ public class Client {
                 System.out.println("1. Zarejestruj");
                 System.out.println("2. Zaloguj");
                 System.out.println("3. Wyloguj");
-                System.out.println("4. Status");
+                System.out.println("4. Wyślij plik");
+                System.out.println("5. Pobierz plik");
+                System.out.println("6. Status");
                 System.out.println("Type 'exit' to quit.");
 
                 // Odczytaj komendę od użytkownika
@@ -69,8 +72,48 @@ public class Client {
                         continue;
                     }
                 }
-                // Obsługuje komendę statusu
                 else if (command.equals("4")) {
+                    if (loggedInUser != null) {
+                        System.out.println("Wybierz plik do wysłania -> pełny format np. 'plik.txt' ");
+                        FileTransfer.getALLFiles(new File("src/ClientData"));
+                        String[] parts = userInput.readLine().split(" ");
+                        if (parts.length != 1) {
+                            System.out.println("Invalid plik format. Please enter: <plik.txt>");
+                            continue;
+                        }
+                        else
+                        {
+                            serverOutput.writeBytes("send " + parts[0] + '\n');
+                            System.out.println("Plik w trakcie przesyłania.");
+                        }
+                    }
+                    else {
+                        System.out.println("You are not logged in.");
+                        continue;
+                    }
+                }
+                else if (command.equals("5")) {
+                    if (loggedInUser != null) {
+                        System.out.println("Wybierz plik do pobrania -> pełny format np. 'plik.txt' ");
+                        FileTransfer.getALLFiles(new File("src/Data"));
+                        String[] parts = userInput.readLine().split(" ");
+                        if (parts.length != 1) {
+                            System.out.println("Invalid plik format. Please enter: <plik.txt>");
+                            continue;
+                        }
+                        else
+                        {
+                            serverOutput.writeBytes("recieve" + parts[0] + '\n');
+                            System.out.println("Plik w trakcie pobierania.");
+                        }
+                    }
+                    else {
+                        System.out.println("You are not logged in.");
+                        continue;
+                    }
+                }
+                // Obsługuje komendę statusu
+                else if (command.equals("6")) {
                     if (loggedInUser != null) {
                         System.out.println("You are logged in as: " + loggedInUser);
                     } else {

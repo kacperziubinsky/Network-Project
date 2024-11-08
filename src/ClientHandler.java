@@ -1,8 +1,6 @@
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class ClientHandler extends Thread {
     private Socket clientSocket;
@@ -29,6 +27,15 @@ public class ClientHandler extends Thread {
                         break;
                     case "login":
                         handleLogin(parts);
+                        break;
+                    case "send":
+                        try {
+                            handleSend(parts);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        break;
+                    case "recieve":
                         break;
                     case "logout":
                         handleLogout(parts);
@@ -100,5 +107,15 @@ public class ClientHandler extends Thread {
             output.writeBytes("Logout successful!\n");
         }
     }
+    private void handleSend(String[] parts) throws Exception {
+        if (parts.length < 2) {
+            output.writeBytes("Invalid send command format. Please enter: send <filename>\n");
+            return;
+        }
+        String filename = parts[1];
+        FileTransfer.sendFile("src/Data/" + filename, filename);
+    }
+
+
 
 }

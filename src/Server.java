@@ -1,3 +1,4 @@
+import java.io.File;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -11,7 +12,6 @@ public class Server {
         ServerSocket serverSocket = new ServerSocket(2137);
 
         System.out.println("Server ruszyl..");
-
         while (true) {
             Socket clientSocket = serverSocket.accept();
             new ClientHandler(clientSocket).start();
