@@ -13,6 +13,7 @@ public class ClientHandler extends Thread {
         this.output = new DataOutputStream(socket.getOutputStream());
     }
 
+
     @Override
     public void run() {
         try {
@@ -68,7 +69,7 @@ public class ClientHandler extends Thread {
             output.writeBytes("Username already exists.\n");
         } else {
             Server.users.put(username, password);
-            Server.loggedInUsers.put(username, false);  // User is initially logged out
+            Server.loggedInUsers.put(username, false);
             output.writeBytes("Registration successful!\n");
         }
     }
@@ -115,7 +116,5 @@ public class ClientHandler extends Thread {
         String filename = parts[1];
         FileTransfer.sendFile("src/Data/" + filename, filename);
     }
-
-
 
 }
