@@ -22,6 +22,8 @@ public class Client {
                 System.out.println("4. Wyślij plik");
                 System.out.println("5. Pobierz plik");
                 System.out.println("6. Status");
+                System.out.println("7. Dodaj post");
+                System.out.println("8. Wyświetl posty");
                 System.out.println("Type 'exit' to quit.");
 
                 command = userInput.readLine();
@@ -159,7 +161,7 @@ public class Client {
                     } case "4": {
                         if (loggedInUser != null) {
                             System.out.println("Wybierz plik do wysłania -> pełny format np. 'plik.txt' ");
-                            FileTransfer.getALLFiles(new File("src/ClientData"));
+                            FileTransfer.getALLFiles(new File("src/Clientdata"));
                             String[] parts = userInput.readLine().split(" ");
                             if (parts.length != 1) {
                                 System.out.println("Invalid plik format. Please enter: <plik.txt>");
@@ -172,27 +174,63 @@ public class Client {
                             System.out.println("You are not logged in.");
                             continue;
                         }
+                        break;
                     } case "5": {
                         if (loggedInUser != null) {
                             System.out.println("Wybierz plik do pobrania -> pełny format np. 'plik.txt' ");
-                            FileTransfer.getALLFiles(new File("src/Data"));
+                            FileTransfer.getALLFiles(new File("src/Serwisdane"));
                             String[] parts = userInput.readLine().split(" ");
                             if (parts.length != 1) {
                                 System.out.println("Invalid plik format. Please enter: <plik.txt>");
                                 continue;
                             } else {
-                                serverOutput.writeBytes("recieve" + parts[0] + '\n');
-                                System.out.println("Plik w trakcie pobierania.");
+                                serverOutput.writeBytes("rec " + parts[0] + '\n');
+                                System.out.println("Plik w trakcie przesyłania.");
                             }
                         } else {
                             System.out.println("You are not logged in.");
                             continue;
                         }
+                        break;
                     } case "6": {
                         if (loggedInUser != null) {
                             System.out.println("You are logged in as: " + loggedInUser);
                         } else {
                             System.out.println("You are not logged in.");
+                        }
+                        break;
+                    } case "7": {
+                        if (loggedInUser != null) {
+                            System.out.println("Enter post content:");
+                            String postContent = userInput.readLine();
+                            String response;
+                            try {
+                                response = serverInput.readLine();
+                            } catch (IOException e) {
+                                System.out.println("Error while reading server response: " + e.getMessage());
+                                return;
+                            }
+
+                            if (response == null) {
+                                System.out.println("Server did not respond in time.");
+                                return;
+                            }
+                            serverOutput.writeBytes("add_post " + postContent + '\n');
+                        } else {
+                            System.out.println("You need to be logged in to add a post.");
+                        }
+                        break;
+                    } case "8": {
+                        if (loggedInUser != null) {
+
+                            serverOutput.writeBytes("view_posts" + '\n');
+
+                            String response;
+                            while (!(response = serverInput.readLine()).equals("END")) {
+                                System.out.println("Post: " + response);
+                            }
+                        } else {
+                            System.out.println("You need to be logged in to view posts.");
                         }
                         break;
                     }

@@ -3,6 +3,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ClientHandler extends Thread {
+    private final PostHandler postHandler;
     private Socket clientSocket;
     private BufferedReader input;
     private DataOutputStream output;
@@ -11,6 +12,7 @@ public class ClientHandler extends Thread {
         this.clientSocket = socket;
         this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.output = new DataOutputStream(socket.getOutputStream());
+        this.postHandler = new PostHandler(output);
     }
 
 
@@ -31,16 +33,23 @@ public class ClientHandler extends Thread {
                         break;
                     case "send":
                         try {
-                            handleSend(parts);
+                            handleSend(parts,"src/Serwisdane/","src/Clientdata/");
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
                         break;
-                    case "recieve":
+                    case "rec":
+                        try {
+                            handleSend(parts,"src/Clientdata/","src/Serwisdane/");
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                         break;
                     case "logout":
                         handleLogout(parts);
                         break;
+                        case "viewposts":
+                            postHandler.handleViewPosts();
                     default:
                         output.writeBytes("Unknown command.\n");
                         break;
@@ -108,13 +117,13 @@ public class ClientHandler extends Thread {
             output.writeBytes("Logout successful!\n");
         }
     }
-    private void handleSend(String[] parts) throws Exception {
+    private void handleSend(String[] parts,String dir1, String dir2) throws Exception {
         if (parts.length < 2) {
             output.writeBytes("Invalid send command format. Please enter: send <filename>\n");
             return;
         }
         String filename = parts[1];
-        FileTransfer.sendFile("src/Data/" + filename, filename);
+        FileTransfer.sendFile(dir1, filename, dir2);
     }
 
 }
