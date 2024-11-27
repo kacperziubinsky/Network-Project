@@ -47,6 +47,7 @@ public class Client {
                             serverOutput.writeBytes("register " + username + " " + password + '\n');
 
                             String response;
+
                             try {
                                 response = serverInput.readLine();
                             } catch (IOException e) {
