@@ -203,6 +203,7 @@ public class Client {
                         if (loggedInUser != null) {
                             System.out.println("Enter post content:");
                             String postContent = userInput.readLine();
+                            String username = loggedInUser;
                             String response;
                             try {
                                 response = serverInput.readLine();
@@ -211,11 +212,13 @@ public class Client {
                                 return;
                             }
 
+
+
                             if (response == null) {
                                 System.out.println("Server did not respond in time.");
                                 return;
                             }
-                            serverOutput.writeBytes("add_post " + postContent + '\n');
+                            serverOutput.writeBytes("add_post " + postContent + " " + username + '\n');
                         } else {
                             System.out.println("You need to be logged in to add a post.");
                         }

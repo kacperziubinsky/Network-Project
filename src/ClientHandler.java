@@ -48,8 +48,13 @@ public class ClientHandler extends Thread {
                     case "logout":
                         handleLogout(parts);
                         break;
-                        case "viewposts":
-                            postHandler.handleViewPosts();
+                    case "view_posts":
+                        postHandler.handleViewPosts();
+                        break;
+                    case "add_post":
+                        postHandler.handleAddPost(parts[1], parts[2] );
+                        break;
+
                     default:
                         output.writeBytes("Unknown command.\n");
                         break;
@@ -125,5 +130,6 @@ public class ClientHandler extends Thread {
         String filename = parts[1];
         FileTransfer.sendFile(dir1, filename, dir2);
     }
+
 
 }
