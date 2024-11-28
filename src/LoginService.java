@@ -11,7 +11,7 @@ public class LoginService implements Runnable {
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("LoginService running on port " + PORT);
-
+            users.put("admin", "admin");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(() -> handleClient(clientSocket)).start();

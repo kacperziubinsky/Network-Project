@@ -6,12 +6,8 @@ public class Client {
 
     public static void main(String args[]) throws Exception {
         BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
-        Socket clientSocket = new Socket("localhost", 2137);
-        DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
-        BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
         String command;
-
 
         try {
             while (true) {
@@ -44,44 +40,37 @@ public class Client {
                             }
                             String username = parts[0];
                             String password = parts[1];
-                            serverOutput.writeBytes("register " + username + " " + password + '\n');
 
-                            String response;
+                            try (Socket clientSocket = new Socket("localhost", 2137);
+                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
+                                 BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
-                            try {
-                                response = serverInput.readLine();
+                                serverOutput.writeBytes("register " + username + " " + password + '\n');
+
+                                String response = serverInput.readLine();
+                                if (response == null) {
+                                    System.out.println("Server did not respond in time.");
+                                    continue;
+                                }
+
+                                if (response.equals("Username already exists.")) {
+                                    System.out.println("Username already exists.");
+                                } else if (response.equals("Registration successful!")) {
+                                    System.out.println("Registration successful!");
+                                }
                             } catch (IOException e) {
-                                System.out.println("Error while reading server response: " + e.getMessage());
-                                return;
-                            }
-
-                            if (response == null) {
-                                System.out.println("Server did not respond in time.");
-                                return;
-                            }
-
-                            if (response.equals("Username already exists.")) {
-                                System.out.println("Username already exists.");
-                            } else if (response.equals("Registration successful!")) {
-                                System.out.println("Registration successful!");
+                                System.out.println("Error while communicating with the server: " + e.getMessage());
                             }
                         } else {
                             System.out.println("You are already logged in. Please logout first.");
                         }
                         break;
-
-                    } case "2": {
+                    }
+                    case "2": {
                         if (loggedInUser == null) {
                             System.out.println("Enter username and password (format: <username> <password>):");
 
-                            String[] parts;
-                            try {
-                                parts = userInput.readLine().split(" ");
-                            } catch (IOException e) {
-                                System.out.println("Error reading input: " + e.getMessage());
-                                return;
-                            }
-
+                            String[] parts = userInput.readLine().split(" ");
                             if (parts.length != 2) {
                                 System.out.println("Invalid login format. Please enter: <username> <password>");
                                 continue;
@@ -90,148 +79,152 @@ public class Client {
                             String username = parts[0];
                             String password = parts[1];
 
-                            try {
+                            try (Socket clientSocket = new Socket("localhost", 2137);
+                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
+                                 BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+
                                 serverOutput.writeBytes("login " + username + " " + password + '\n');
+
+                                String response = serverInput.readLine();
+                                if (response == null) {
+                                    System.out.println("Server did not respond in time.");
+                                    continue;
+                                }
+                                System.out.println(response);
+                                switch (response) {
+                                    case "Login successful":
+                                        loggedInUser = username;
+                                        System.out.println("You are now logged in as: " + loggedInUser);
+                                        break;
+                                    case "Invalid credentials":
+                                        System.out.println("Login failed: Invalid username or password.");
+                                        break;
+                                    case "User already logged in":
+                                        System.out.println("Login failed: User is already logged in.");
+                                        break;
+                                    default:
+                                        System.out.println("Login failed: " + response);
+                                        break;
+                                }
                             } catch (IOException e) {
-                                System.out.println("Error while sending login data: " + e.getMessage());
-                                return;
-                            }
-
-                            String response;
-                            try {
-                                response = serverInput.readLine();
-                            } catch (IOException e) {
-                                System.out.println("Error while reading server response: " + e.getMessage());
-                                return;
-                            }
-
-                            if (response == null) {
-                                System.out.println("Server did not respond in time.");
-                                return;
-                            }
-
-                            switch (response) {
-                                case "Login successful!":
-                                    loggedInUser = username;
-                                    System.out.println("You are now logged in as: " + loggedInUser);
-                                    break;
-                                case "Invalid credentials":
-                                    System.out.println("Login failed: Invalid username or password.");
-                                    break;
-                                case "User already logged in":
-                                    System.out.println("Login failed: User is already logged in.");
-                                    break;
-                                default:
-                                    System.out.println("Login failed: " + response);
-                                    break;
+                                System.out.println("Error while communicating with the server: " + e.getMessage());
                             }
                         } else {
                             System.out.println("You are already logged in. Please logout first.");
                         }
                         break;
-                    } case "3": {
+                    }
+                    case "3": {
                         if (loggedInUser != null) {
-                            serverOutput.writeBytes("logout " + loggedInUser + '\n');
+                            try (Socket clientSocket = new Socket("localhost", 2137);
+                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
+                                 BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+
+                                serverOutput.writeBytes("logout " + loggedInUser + '\n');
+
+                                String response = serverInput.readLine();
+                                if (response == null) {
+                                    System.out.println("Server did not respond in time.");
+                                    continue;
+                                }
+
+                                if (response.equals("Logout successful!")) {
+                                    loggedInUser = null;
+                                    System.out.println("You have been logged out.");
+                                } else {
+                                    System.out.println("Logout failed: " + response);
+                                }
+                            } catch (IOException e) {
+                                System.out.println("Error while communicating with the server: " + e.getMessage());
+                            }
                         } else {
                             System.out.println("You are not logged in.");
-                            continue;
                         }
-
-                        String response;
-                        try {
-                            response = serverInput.readLine();
-                        } catch (IOException e) {
-                            System.out.println("Error while reading server response: " + e.getMessage());
-                            return;
-                        }
-
-                        if (response == null) {
-                            System.out.println("Server did not respond in time.");
-                            return;
-                        }
-
-                        if (response.equals("Logout successful!")) {
-                            loggedInUser = null;
-                            System.out.println("You have been logged out.");
-                        } else {
-                            System.out.println("Logout failed: " + response);
-                        }
-
                         break;
-
-                    } case "4": {
+                    }
+                    case "4": {
                         if (loggedInUser != null) {
-                            System.out.println("Wybierz plik do wysłania -> pełny format np. 'plik.txt' ");
+                            System.out.println("Choose a file to send -> full format e.g. 'file.txt' ");
                             FileTransfer.getALLFiles(new File("src/Clientdata"));
                             String[] parts = userInput.readLine().split(" ");
                             if (parts.length != 1) {
-                                System.out.println("Invalid plik format. Please enter: <plik.txt>");
+                                System.out.println("Invalid file format. Please enter: <file.txt>");
                                 continue;
                             } else {
-                                serverOutput.writeBytes("send " + parts[0] + '\n');
-                                System.out.println("Plik w trakcie przesyłania.");
+                                try (Socket clientSocket = new Socket("localhost", 2137);
+                                     DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream())) {
+                                    serverOutput.writeBytes("send " + parts[0] + '\n');
+                                    System.out.println("File is being sent.");
+                                } catch (IOException e) {
+                                    System.out.println("Error while sending the file: " + e.getMessage());
+                                }
                             }
                         } else {
                             System.out.println("You are not logged in.");
-                            continue;
                         }
                         break;
-                    } case "5": {
+                    }
+                    case "5": {
                         if (loggedInUser != null) {
-                            System.out.println("Wybierz plik do pobrania -> pełny format np. 'plik.txt' ");
-                            FileTransfer.getALLFiles(new File("src/Serwisdane"));
+                            System.out.println("Choose a file to download -> full format e.g. 'file.txt' ");
+                            FileTransfer.getALLFiles(new File("src/ServerData"));
                             String[] parts = userInput.readLine().split(" ");
                             if (parts.length != 1) {
-                                System.out.println("Invalid plik format. Please enter: <plik.txt>");
+                                System.out.println("Invalid file format. Please enter: <file.txt>");
                                 continue;
                             } else {
-                                serverOutput.writeBytes("rec " + parts[0] + '\n');
-                                System.out.println("Plik w trakcie przesyłania.");
+                                try (Socket clientSocket = new Socket("localhost", 2137);
+                                     DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream())) {
+                                    serverOutput.writeBytes("rec " + parts[0] + '\n');
+                                    System.out.println("File is being downloaded.");
+                                } catch (IOException e) {
+                                    System.out.println("Error while downloading the file: " + e.getMessage());
+                                }
                             }
                         } else {
                             System.out.println("You are not logged in.");
-                            continue;
                         }
                         break;
-                    } case "6": {
+                    }
+                    case "6": {
                         if (loggedInUser != null) {
                             System.out.println("You are logged in as: " + loggedInUser);
                         } else {
                             System.out.println("You are not logged in.");
                         }
                         break;
-                    } case "7": {
+                    }
+                    case "7": {
                         if (loggedInUser != null) {
                             System.out.println("Enter post content:");
                             String postContent = userInput.readLine();
-                            String username = loggedInUser;
-                            String response;
-                            try {
-                                response = serverInput.readLine();
+
+                            try (Socket clientSocket = new Socket("localhost", 2137);
+                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream())) {
+                                serverOutput.writeBytes("add_post " + postContent + " " + loggedInUser + '\n');
+                                System.out.println("Post added.");
                             } catch (IOException e) {
-                                System.out.println("Error while reading server response: " + e.getMessage());
-                                return;
+                                System.out.println("Error while adding post: " + e.getMessage());
                             }
-
-
-
-                            if (response == null) {
-                                System.out.println("Server did not respond in time.");
-                                return;
-                            }
-                            serverOutput.writeBytes("add_post " + postContent + " " + username + '\n');
                         } else {
                             System.out.println("You need to be logged in to add a post.");
                         }
                         break;
-                    } case "8": {
+                    }
+                    case "8": {
                         if (loggedInUser != null) {
+                            try (Socket clientSocket = new Socket("localhost", 2137);
+                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
+                                 BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
-                            serverOutput.writeBytes("view_posts" + '\n');
+                                serverOutput.writeBytes("view_posts\n");
 
-                            String response;
-                            while (!(response = serverInput.readLine()).equals("END")) {
-                                System.out.println("Post: " + response);
+                                String response;
+                                while (!(response = serverInput.readLine()).equals("END")) {
+                                    System.out.println("Post: " + response);
+                                }
+                            } catch (IOException e) {
+                                System.out.println("Error while viewing posts: " + e.getMessage());
                             }
                         } else {
                             System.out.println("You need to be logged in to view posts.");
@@ -239,14 +232,6 @@ public class Client {
                         break;
                     }
                 }
-            }
-            try {
-                if (clientSocket != null && !clientSocket.isClosed()) {
-                    clientSocket.close();
-                    System.out.println("Connection closed.");
-                }
-            } catch (IOException e) {
-                System.out.println("Error while closing the socket: " + e.getMessage());
             }
         } finally {
             System.out.println("Program stopped");

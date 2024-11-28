@@ -38,9 +38,6 @@ public class APIGateway {
                     break;
                 case "login":
                     forwardToService(parts, "localhost", 2132, output);
-                case "logout":
-                    forwardToService(parts, "localhost", 2139, output);
-                    break;
                 default:
                     output.writeBytes("Unknown command\n");
             }
