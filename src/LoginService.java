@@ -5,13 +5,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LoginService implements Runnable {
     private static final int PORT = 2139;
     private static ConcurrentHashMap<String, Boolean> loggedInUsers = new ConcurrentHashMap<>();
-    private static ConcurrentHashMap<String, String> users = new ConcurrentHashMap<>();
 
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("LoginService running on port " + PORT);
-            users.put("admin", "admin");
+
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(() -> handleClient(clientSocket)).start();
@@ -38,16 +36,14 @@ public class LoginService implements Runnable {
             String username = parts[1];
             String password = parts[2];
 
-            if (!users.containsKey(username)) {
-                output.writeBytes("Username does not exist\n");
-            } else if (!users.get(username).equals(password)) {
-                output.writeBytes("Incorrect password\n");
-            } else if (loggedInUsers.getOrDefault(username, false)) {
-                output.writeBytes("Already logged in\n");
-            } else {
-                loggedInUsers.put(username, true);
-                output.writeBytes("Login successful\n");
+            DBHandler db = new DBHandler();
+
+            if(db.loginUser(username, password)){
+                output.writeBytes("Login successful");
+            } else{
+                output.writeBytes("Error!");
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

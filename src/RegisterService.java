@@ -4,7 +4,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RegisterService implements Runnable{
     private static final int PORT = 2138;
-    private static ConcurrentHashMap<String, String> users = new ConcurrentHashMap<>();
 
     @Override
     public void run() {
@@ -35,10 +34,11 @@ public class RegisterService implements Runnable{
             String username = parts[1];
             String password = parts[2];
 
-            if (users.putIfAbsent(username, password) == null) {
-                output.writeBytes("Registration successful!\n");
+            DBHandler db = new DBHandler();
+            if(db.createUser(username, password)){
+                output.writeBytes("Registration successful!");
             } else {
-                output.writeBytes("Username already exists.\n");
+                output.writeBytes("Error");
             }
         } catch (IOException e) {
             e.printStackTrace();
