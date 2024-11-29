@@ -15,6 +15,9 @@ public class APIGateway {
             Thread registerServiceThread = new Thread(new RegisterService());
             registerServiceThread.start();
 
+            Thread postServiceThread = new Thread(new PostService());
+            postServiceThread.start();
+
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(() -> handleClient(clientSocket)).start();
@@ -37,7 +40,20 @@ public class APIGateway {
                     forwardToService(parts, "localhost", 2138, output);
                     break;
                 case "login":
-                    forwardToService(parts, "localhost", 2132, output);
+                    forwardToService(parts, "localhost", 2139, output);
+                    break;
+                case "send":
+                    forwardToService(parts, "localhost", 2136, output);
+                    break;
+                case "receive":
+                    forwardToService(parts, "localhost", 2135, output);
+                    break;
+                case "post":
+                    forwardToService(parts, "localhost", 2134, output);
+                    break;
+                case "view":
+                    forwardToService(parts, "localhost", 2134, output);
+                    break;
                 default:
                     output.writeBytes("Unknown command\n");
             }

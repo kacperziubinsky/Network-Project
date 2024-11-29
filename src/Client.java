@@ -201,7 +201,7 @@ public class Client {
 
                             try (Socket clientSocket = new Socket("localhost", 2137);
                                  DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream())) {
-                                serverOutput.writeBytes("add_post " + postContent + " " + loggedInUser + '\n');
+                                serverOutput.writeBytes("post" + postContent + " " + loggedInUser + '\n');
                                 System.out.println("Post added.");
                             } catch (IOException e) {
                                 System.out.println("Error while adding post: " + e.getMessage());

@@ -3,7 +3,7 @@ import java.net.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LoginService implements Runnable {
-    private static final int PORT = 2132;
+    private static final int PORT = 2139;
     private static ConcurrentHashMap<String, Boolean> loggedInUsers = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<String, String> users = new ConcurrentHashMap<>();
 
