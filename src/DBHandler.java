@@ -1,5 +1,5 @@
 import java.sql.*;
-import java.util.Scanner;
+import java.util.*;
 
 public class DBHandler {
 
@@ -55,6 +55,9 @@ public class DBHandler {
             e.printStackTrace();
             return false;
         }
+        finally {
+            closeConnection();
+        }
     }
 
     public static boolean loginUser(String username, String password) {
@@ -77,15 +80,18 @@ public class DBHandler {
             e.printStackTrace();
             return false;
         }
+        finally {
+            closeConnection();
+        }
     }
 
-    public static boolean addPost(String title, String content) {
+    public static boolean addPost(String autor, String content) {
         try {
             connectToDatabase();
 
-            String query = "INSERT INTO posts (author, content) VALUES (?, ?)";
+            String query = "INSERT INTO posts (username, content) VALUES (?, ?)";
             PreparedStatement stmt = connection.prepareStatement(query);
-            stmt.setString(1, title);
+            stmt.setString(1, autor);
             stmt.setString(2, content);
 
             int rowsAffected = stmt.executeUpdate();
@@ -101,32 +107,34 @@ public class DBHandler {
             e.printStackTrace();
             return false;
         }
+        finally {
+            closeConnection();
+        }
     }
 
-    public static void viewPosts() {
+    public static List<String[]> getPosts() {
         try {
             connectToDatabase();
 
-            String query = "SELECT * FROM postd ";
+            String query = "SELECT * FROM posts ";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
-
+            List<String[]> posts = new ArrayList<>();
             while (rs.next()) {
-                int postID = rs.getInt("postID");
-                String title = rs.getString("title");
                 String content = rs.getString("content");
                 String username = rs.getString("username");
-                System.out.println("Post ID: " + postID);
-                System.out.println("Autor: " + username);
-                System.out.println("Tytuł: " + title);
-                System.out.println("Treść: " + content);
-                System.out.println("------------------------------");
-
+                int postid = rs.getInt("postID");
+                posts.add(new String[]{String.valueOf(postid), username, content});
             }
-
+            System.out.println(posts);
+            return posts;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        finally {
+            closeConnection();
+        }
+        return null;
     }
 
     public static void closeConnection() {
@@ -138,54 +146,7 @@ public class DBHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
-    // Main, który może teraz używać tych metod
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-            System.out.println("\nWybierz opcję:");
-            System.out.println("1. Logowanie");
-            System.out.println("2. Rejestracja");
-            System.out.println("3. Dodaj post");
-            System.out.println("4. Wyświetl posty");
-            System.out.println("5. Wyjście");
-
-            int choice = scanner.nextInt();
-            scanner.nextLine();  // Konsumowanie nowej linii
-
-            switch (choice) {
-                case 1:
-                    System.out.print("Podaj nazwę użytkownika: ");
-                    String usernameLogin = scanner.nextLine();
-                    System.out.print("Podaj hasło: ");
-                    String passwordLogin = scanner.nextLine();
-                    loginUser(usernameLogin, passwordLogin);
-                    break;
-                case 2:
-                    System.out.print("Podaj nazwę użytkownika: ");
-                    String usernameReg = scanner.nextLine();
-                    System.out.print("Podaj hasło: ");
-                    String passwordReg = scanner.nextLine();
-                    createUser(usernameReg, passwordReg);
-                    break;
-                case 3:
-                    System.out.print("Podaj tytuł postu: ");
-                    String title = scanner.nextLine();
-                    System.out.print("Podaj treść postu: ");
-                    String content = scanner.nextLine();
-                    addPost(title, content);
-                    break;
-                case 4:
-                    viewPosts();
-                    break;
-                case 5:
-                    closeConnection();
-                    return;
-                default:
-                    System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
-            }
-        }
-    }
 }

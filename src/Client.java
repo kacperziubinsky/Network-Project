@@ -15,8 +15,8 @@ public class Client {
                 System.out.println("1. Register");
                 System.out.println("2. Login");
                 System.out.println("3. Logout");
-                System.out.println("4. Wyślij plik");
-                System.out.println("5. Pobierz plik");
+                System.out.println("4. Wyślij plik (niedziala pan (chwilowo))");
+                System.out.println("5. Pobierz plik (niedziala pan (chwilowo))");
                 System.out.println("6. Status");
                 System.out.println("7. Dodaj post");
                 System.out.println("8. Wyświetl posty");
@@ -204,11 +204,10 @@ public class Client {
                                  BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())))  {
 
                                 String response;
-
-                                serverOutput.writeBytes("post " + postContent + " " + loggedInUser + '\n');
+                                String encodedPostContent = URLEncoder.encode(postContent, "UTF-8");
+                                serverOutput.writeBytes("post " + loggedInUser + " " + encodedPostContent + '\n');
                                 response = serverInput.readLine();
                                 System.out.println(response);
-                                System.out.println("Post added.");
                             } catch (IOException e) {
                                 System.out.println("Error while adding post: " + e.getMessage());
                             }
@@ -225,8 +224,12 @@ public class Client {
                             serverOutput.writeBytes("view_posts\n");
 
                             String response;
-                            response = serverInput.readLine();
-                            System.out.println(response);
+                            while ((response = serverInput.readLine()) != null) {
+                                String[] posts = response.split("##");
+                                for (String post : posts) {
+                                    System.out.println(post);
+                                }
+                            }
                         } catch (IOException e) {
                             System.out.println("Error while viewing posts: " + e.getMessage());
                         }
