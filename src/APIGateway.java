@@ -34,12 +34,13 @@ public class APIGateway {
             String message = input.readLine();
             String[] parts = message.split(" ");
             String command = parts[0];
-
+            System.out.println(command);
             switch (command) {
                 case "register":
                     forwardToService(parts, "localhost", 2138, output);
                     break;
                 case "login":
+                    System.out.println("gg");
                     forwardToService(parts, "localhost", 2139, output);
                     break;
                 case "send":
@@ -49,9 +50,10 @@ public class APIGateway {
                     forwardToService(parts, "localhost", 2135, output);
                     break;
                 case "post":
+                    System.out.println("ff");
                     forwardToService(parts, "localhost", 2134, output);
                     break;
-                case "view":
+                case "view_posts":
                     forwardToService(parts, "localhost", 2134, output);
                     break;
                 default:

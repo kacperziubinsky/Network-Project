@@ -29,37 +29,23 @@ public class PostService implements Runnable {
              DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())) {
             String message = input.readLine();
             String[] parts = message.split(" ");
-            if (parts.length != 3 || !parts[0].equals("post") || !parts[0].equals("view")) {
-                output.writeBytes("Invalid command\n");
-                return;
-            }
-            switch(parts[0])
-            {
+
+            System.out.println(parts[0]);
+            switch(parts[0]) {
                 case "post":
-                    if(posts.size() < MAX_POSTS)
-                    {
-                        if(parts[2] == null || parts[2].length() > MAX_POST_LENGTH)
-                        {
+                    if (posts.size() < MAX_POSTS) {
+                        if (parts[2] == null || parts[2].length() > MAX_POST_LENGTH) {
                             output.writeBytes("Invalid post\n");
                             return;
                         }
                         posts.put(parts[1], parts[2]);
                         output.writeBytes("Post successful\n");
-                    }
-                    else
-                    {
+                    } else {
                         output.writeBytes("Post limit reached\n");
                     }
                     return;
-                case "view":
-                    if(posts.containsKey(parts[1]))
-                    {
-                        output.writeBytes(posts.get(parts[0]) + "\n" + posts.get(parts[1]) + "\n");
-                    }
-                    else
-                    {
-                        output.writeBytes("Post not found\n");
-                    }
+                case "view_posts":
+                    output.writeBytes("wypisuje se posty:");
             }
         } catch (IOException e) {
             e.printStackTrace();

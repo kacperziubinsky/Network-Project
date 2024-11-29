@@ -200,8 +200,14 @@ public class Client {
                             String postContent = userInput.readLine();
 
                             try (Socket clientSocket = new Socket("localhost", 2137);
-                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream())) {
-                                serverOutput.writeBytes("post" + postContent + " " + loggedInUser + '\n');
+                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
+                                 BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())))  {
+
+                                String response;
+
+                                serverOutput.writeBytes("post " + postContent + " " + loggedInUser + '\n');
+                                response = serverInput.readLine();
+                                System.out.println(response);
                                 System.out.println("Post added.");
                             } catch (IOException e) {
                                 System.out.println("Error while adding post: " + e.getMessage());
@@ -211,28 +217,22 @@ public class Client {
                         }
                         break;
                     }
-                    case "8": {
-                        if (loggedInUser != null) {
-                            try (Socket clientSocket = new Socket("localhost", 2137);
-                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
-                                 BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+                    case "8":
+                        try (Socket clientSocket = new Socket("localhost", 2137);
+                             DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
+                             BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
-                                serverOutput.writeBytes("view_posts\n");
+                            serverOutput.writeBytes("view_posts\n");
 
-                                String response;
-                                while (!(response = serverInput.readLine()).equals("END")) {
-                                    System.out.println("Post: " + response);
-                                }
-                            } catch (IOException e) {
-                                System.out.println("Error while viewing posts: " + e.getMessage());
-                            }
-                        } else {
-                            System.out.println("You need to be logged in to view posts.");
+                            String response;
+                            response = serverInput.readLine();
+                            System.out.println(response);
+                        } catch (IOException e) {
+                            System.out.println("Error while viewing posts: " + e.getMessage());
                         }
                         break;
                     }
                 }
-            }
         } finally {
             System.out.println("Program stopped");
         }

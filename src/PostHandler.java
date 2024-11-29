@@ -4,6 +4,7 @@ import java.util.HashMap;
 public class PostHandler {
     protected HashMap<String, String> posts = new HashMap<>();
     private DataOutputStream output;
+    private static final int PORT = 2139;
 
     public PostHandler(DataOutputStream output) {
         this.output = output;
