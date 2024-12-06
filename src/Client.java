@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.UUID;
 
 public class Client {
     private static String loggedInUser = null;
@@ -45,7 +46,8 @@ public class Client {
                                  DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
                                  BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
-                                serverOutput.writeBytes("register " + username + " " + password + '\n');
+                                String ID = UUID.randomUUID().toString();
+                                serverOutput.writeBytes("register " + ID + " " + username + " " + password + '\n');
 
                                 String response = serverInput.readLine();
                                 if (response == null) {
@@ -83,7 +85,8 @@ public class Client {
                                  DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
                                  BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
-                                serverOutput.writeBytes("login " + username + " " + password + '\n');
+                                String ID = UUID.randomUUID().toString();
+                                serverOutput.writeBytes("login " + ID + " " + username + " " + password + '\n');
 
                                 String response = serverInput.readLine();
                                 if (response == null) {
@@ -120,6 +123,7 @@ public class Client {
                                  DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
                                  BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
+                                String ID = UUID.randomUUID().toString();
                                 serverOutput.writeBytes("logout " + loggedInUser + '\n');
 
                                 String response = serverInput.readLine();
@@ -153,7 +157,8 @@ public class Client {
                             } else {
                                 try (Socket clientSocket = new Socket("localhost", 2137);
                                      DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream())) {
-                                    serverOutput.writeBytes("send " + parts[0] + '\n');
+                                    String ID = UUID.randomUUID().toString();
+                                    serverOutput.writeBytes("send " + ID + " " + parts[0] + '\n');
                                     System.out.println("File is being sent.");
                                 } catch (IOException e) {
                                     System.out.println("Error while sending the file: " + e.getMessage());
@@ -175,7 +180,8 @@ public class Client {
                             } else {
                                 try (Socket clientSocket = new Socket("localhost", 2137);
                                      DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream())) {
-                                    serverOutput.writeBytes("rec " + parts[0] + '\n');
+                                    String ID = UUID.randomUUID().toString();
+                                    serverOutput.writeBytes("rec " + ID + " " + parts[0] + '\n');
                                     System.out.println("File is being downloaded.");
                                 } catch (IOException e) {
                                     System.out.println("Error while downloading the file: " + e.getMessage());
@@ -205,7 +211,8 @@ public class Client {
 
                                 String response;
                                 String encodedPostContent = URLEncoder.encode(postContent, "UTF-8");
-                                serverOutput.writeBytes("post " + loggedInUser + " " + encodedPostContent + '\n');
+                                String ID = UUID.randomUUID().toString();
+                                serverOutput.writeBytes("post " + ID + " " + loggedInUser + " " + encodedPostContent + '\n');
                                 response = serverInput.readLine();
                                 System.out.println(response);
                             } catch (IOException e) {
@@ -221,7 +228,8 @@ public class Client {
                              DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
                              BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
-                            serverOutput.writeBytes("view_posts\n");
+                            String ID = UUID.randomUUID().toString();
+                            serverOutput.writeBytes("view_posts" + ID + " ");
 
                             String response;
                             while ((response = serverInput.readLine()) != null) {
