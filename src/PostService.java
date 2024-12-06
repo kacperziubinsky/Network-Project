@@ -13,7 +13,6 @@ public class PostService implements Runnable {
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("PostService running on port " + PORT);
-
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(() -> handlePosts(clientSocket)).start();
@@ -21,9 +20,7 @@ public class PostService implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
     private void handlePosts(Socket clientSocket) {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())) {

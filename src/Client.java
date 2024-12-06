@@ -29,7 +29,6 @@ public class Client {
                     System.out.println("Exiting client...");
                     break;
                 }
-
                 switch (command) {
                     case "1": {
                         if (loggedInUser == null) {
@@ -55,10 +54,31 @@ public class Client {
                                     continue;
                                 }
 
-                                if (response.equals("Username already exists.")) {
-                                    System.out.println("Username already exists.");
-                                } else if (response.equals("Registration successful!")) {
-                                    System.out.println("Registration successful!");
+                                String[] responseParts = response.split(" ");
+                                if (responseParts.length < 3) {
+                                    System.out.println("Unexpected server response: " + response);
+                                    continue;
+                                }
+
+                                String responseID = responseParts[1];
+                                String statusCode = responseParts[2];
+                                System.out.println("ID: " + responseID + " " + "Status: " + statusCode);
+
+                                if (!responseID.equals(ID)) {
+                                    System.out.println("Error: Response ID does not match request ID. Possible server issue.");
+                                    System.out.println("Expected ID: " + ID + ", Received ID: " + responseID);
+                                    continue;
+                                }
+                                switch (statusCode) {
+                                    case "200":
+                                        System.out.println("Registration successful!");
+                                        break;
+                                    case "400":
+                                        System.out.println("Username already exists.");
+                                        break;
+                                    default:
+                                        System.out.println("Unexpected status code: " + statusCode);
+                                        break;
                                 }
                             } catch (IOException e) {
                                 System.out.println("Error while communicating with the server: " + e.getMessage());
@@ -93,17 +113,30 @@ public class Client {
                                     System.out.println("Server did not respond in time.");
                                     continue;
                                 }
-                                System.out.println(response);
-                                switch (response) {
-                                    case "Login successful":
+                                String[] responseParts = response.split(" ");
+                                if (responseParts.length < 3) {
+                                    System.out.println("Unexpected server response: " + response);
+                                    continue;
+                                }
+
+                                String responseID = responseParts[1];
+                                String statusCode = responseParts[2];
+                                System.out.println("ID: " + responseID + " " + "Status: " + statusCode);
+
+                                if (!responseID.equals(ID)) {
+                                    System.out.println("Error: Response ID does not match request ID. Possible server issue.");
+                                    System.out.println("Expected ID: " + ID + ", Received ID: " + responseID);
+                                    continue;
+                                }
+                                switch (statusCode) {
+                                    case "200":
+                                        System.out.println("Login successful");
                                         loggedInUser = username;
                                         System.out.println("You are now logged in as: " + loggedInUser);
                                         break;
-                                    case "Invalid credentials":
+                                    case "400":
+                                        System.out.println("Invalid credentials");
                                         System.out.println("Login failed: Invalid username or password.");
-                                        break;
-                                    case "User already logged in":
-                                        System.out.println("Login failed: User is already logged in.");
                                         break;
                                     default:
                                         System.out.println("Login failed: " + response);
