@@ -244,8 +244,7 @@ public class Client {
 
                                 String response;
                                 String encodedPostContent = URLEncoder.encode(postContent, "UTF-8");
-                                String ID = UUID.randomUUID().toString();
-                                serverOutput.writeBytes("post " + ID + " " + loggedInUser + " " + encodedPostContent + '\n');
+                                serverOutput.writeBytes("post " + loggedInUser + " " + encodedPostContent + '\n');
                                 response = serverInput.readLine();
                                 System.out.println(response);
                             } catch (IOException e) {
@@ -261,8 +260,7 @@ public class Client {
                              DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
                              BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
-                            String ID = UUID.randomUUID().toString();
-                            serverOutput.writeBytes("view_posts" + ID + " ");
+                            serverOutput.writeBytes("view_posts \n");
 
                             String response;
                             while ((response = serverInput.readLine()) != null) {

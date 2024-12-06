@@ -50,7 +50,6 @@ public class APIGateway {
                     forwardToService(parts, "localhost", 2135, output);
                     break;
                 case "post":
-                    System.out.println("ff");
                     forwardToService(parts, "localhost", 2134, output);
                     break;
                 case "view_posts":
