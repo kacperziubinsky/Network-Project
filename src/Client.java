@@ -144,20 +144,19 @@ public class Client {
                     }
                     case "4": {
                         if (loggedInUser != null) {
-                            System.out.println("Choose a file to send -> full format e.g. 'file.txt' ");
-                            FileTransfer.getALLFiles(new File("src/Clientdata"));
-                            String[] parts = userInput.readLine().split(" ");
-                            if (parts.length != 1) {
-                                System.out.println("Invalid file format. Please enter: <file.txt>");
-                                continue;
-                            } else {
-                                try (Socket clientSocket = new Socket("localhost", 2137);
-                                     DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream())) {
-                                    serverOutput.writeBytes("send " + parts[0] + '\n');
-                                    System.out.println("File is being sent.");
-                                } catch (IOException e) {
-                                    System.out.println("Error while sending the file: " + e.getMessage());
-                                }
+                            System.out.println("Choose a file to send (full format e.g. 'file.txt'):");
+                            FileTransfer.getALLFiles(new File("src/Clientdata/" + loggedInUser));
+                            String filename = userInput.readLine().trim();
+
+                            try (Socket clientSocket = new Socket("localhost", 2137);
+                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
+                                 BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+
+                                serverOutput.writeBytes("send " + loggedInUser + " " + filename + "\n");
+                                String response = serverInput.readLine();
+                                System.out.println(response);
+                            } catch (IOException e) {
+                                System.out.println("Error while sending file: " + e.getMessage());
                             }
                         } else {
                             System.out.println("You are not logged in.");
@@ -166,20 +165,19 @@ public class Client {
                     }
                     case "5": {
                         if (loggedInUser != null) {
-                            System.out.println("Choose a file to download -> full format e.g. 'file.txt' ");
-                            FileTransfer.getALLFiles(new File("src/ServerData"));
-                            String[] parts = userInput.readLine().split(" ");
-                            if (parts.length != 1) {
-                                System.out.println("Invalid file format. Please enter: <file.txt>");
-                                continue;
-                            } else {
-                                try (Socket clientSocket = new Socket("localhost", 2137);
-                                     DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream())) {
-                                    serverOutput.writeBytes("rec " + parts[0] + '\n');
-                                    System.out.println("File is being downloaded.");
-                                } catch (IOException e) {
-                                    System.out.println("Error while downloading the file: " + e.getMessage());
-                                }
+                            System.out.println("Choose a file to download (full format e.g. 'file.txt'):");
+                            FileTransfer.getALLFiles(new File("src/ServerData/" + loggedInUser));
+                            String filename = userInput.readLine().trim();
+
+                            try (Socket clientSocket = new Socket("localhost", 2137);
+                                 DataOutputStream serverOutput = new DataOutputStream(clientSocket.getOutputStream());
+                                 BufferedReader serverInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+
+                                serverOutput.writeBytes("rec " + loggedInUser + " " + filename + "\n");
+                                String response = serverInput.readLine();
+                                System.out.println(response);
+                            } catch (IOException e) {
+                                System.out.println("Error while downloading file: " + e.getMessage());
                             }
                         } else {
                             System.out.println("You are not logged in.");

@@ -4,7 +4,6 @@ import java.net.*;
 public class APIGateway {
     private static final int PORT = 2137;
 
-
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("API Gateway listening on port " + PORT);
@@ -17,6 +16,9 @@ public class APIGateway {
 
             Thread postServiceThread = new Thread(new PostService());
             postServiceThread.start();
+
+            Thread fileServiceThread = new Thread(new FileService());
+            fileServiceThread.start();
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -34,23 +36,19 @@ public class APIGateway {
             String message = input.readLine();
             String[] parts = message.split(" ");
             String command = parts[0];
-            System.out.println(command);
+
             switch (command) {
                 case "register":
                     forwardToService(parts, "localhost", 2138, output);
                     break;
                 case "login":
-                    System.out.println("gg");
                     forwardToService(parts, "localhost", 2139, output);
                     break;
                 case "send":
+                case "rec":
                     forwardToService(parts, "localhost", 2136, output);
                     break;
-                case "receive":
-                    forwardToService(parts, "localhost", 2135, output);
-                    break;
                 case "post":
-                    System.out.println("ff");
                     forwardToService(parts, "localhost", 2134, output);
                     break;
                 case "view_posts":
