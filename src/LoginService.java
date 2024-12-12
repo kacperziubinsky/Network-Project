@@ -1,14 +1,17 @@
 import java.io.*;
 import java.net.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class LoginService implements Runnable {
-    private static final int PORT = 2139;
-    private static ConcurrentHashMap<String, Boolean> loggedInUsers = new ConcurrentHashMap<>();
+    private int port;
+
+    public LoginService(int port) {
+        this.port = port;
+    }
 
     @Override
     public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("LoginService running on port " + port);
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -19,9 +22,8 @@ public class LoginService implements Runnable {
         }
     }
 
-
-
-    public void handleClient(Socket clientSocket){
+    // Obsługuje zapytania od klientów
+    public void handleClient(Socket clientSocket) {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())) {
 
@@ -31,18 +33,19 @@ public class LoginService implements Runnable {
                 output.writeBytes("Invalid login format\n");
                 return;
             }
+
             String ID = parts[1];
             String username = parts[2];
             String password = parts[3];
 
             DBHandler db = new DBHandler();
-            if(db.loginUser(username, password)){
-                output.writeBytes("ID " + ID + " " + "200" +'\n');
-            } else{
-                output.writeBytes("ID " + ID + " " + "400" +'\n');
+            if (db.loginUser(username, password)) {
+                output.writeBytes("ID " + ID + " 200\n");  // 200 oznacza sukces
+            } else {
+                output.writeBytes("ID " + ID + " 400\n");  // 400 oznacza błąd
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 }
