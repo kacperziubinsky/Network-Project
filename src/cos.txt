@@ -1,0 +1,21 @@
+
+
+                                        CLIENT
+                                           |
+                                        MANAGER
+                                       /       \
+                                   AGENT        AGENT  ....
+                                  /     \
+                              SERVICE    SERVICE ....
+
+
+manager może włączać/wyłączać agentów
+agent może wł/wył serwis
+
+https://github.com/sambrosz/SSMMP-a-simple-protocol-for-Service-Mesh-management/blob/main/ssmmp-pictures.pptx.svg
+
+
+https://github.com/sambrosz/SSMMP-a-simple-protocol-for-Service-Mesh-management
+
+
+
