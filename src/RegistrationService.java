@@ -5,11 +5,6 @@ import java.util.concurrent.*;
 
 public class RegistrationService implements Runnable {
     private static final int SERVICE_PORT = 2200;
-    private final Map<String, String> userCredentials;
-
-    public RegistrationService() {
-        this.userCredentials = new ConcurrentHashMap<>();
-    }
 
     @Override
     public void run() {
@@ -35,11 +30,11 @@ public class RegistrationService implements Runnable {
             String username = parts[0];
             String password = parts[1];
 
-            if (userCredentials.containsKey(username)) {
-                out.println("REGISTRATION_FAILED:Username already exists");
+            DBHandler db = new DBHandler();
+            if(db.createUser(username, password)){
+                out.println("200" +'\n');
             } else {
-                userCredentials.put(username, password);
-                out.println("REGISTRATION_SUCCESS");
+                out.println("400" +'\n');
             }
         } catch (IOException e) {
             e.printStackTrace();

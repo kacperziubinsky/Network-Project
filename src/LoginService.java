@@ -5,13 +5,9 @@ import java.util.concurrent.*;
 
 public class LoginService implements Runnable {
     private static final int SERVICE_PORT = 2300;
-    private final Map<String, String> userCredentials;
-    private final Set<String> loggedInUsers;
 
-    public LoginService(Map<String, String> userCredentials) {
-        this.userCredentials = userCredentials;
-        this.loggedInUsers = ConcurrentHashMap.newKeySet();
-    }
+
+
 
     @Override
     public void run() {
@@ -37,12 +33,13 @@ public class LoginService implements Runnable {
             String username = parts[0];
             String password = parts[1];
 
-            if (userCredentials.containsKey(username) && 
-                userCredentials.get(username).equals(password)) {
-                loggedInUsers.add(username);
-                out.println("LOGIN_SUCCESS");
-            } else {
-                out.println("LOGIN_FAILED");
+            DBHandler db = new DBHandler();
+
+
+            if(db.loginUser(username, password)){
+                out.println("200" +'\n');
+            } else{
+                out.println("400" +'\n');
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,10 +47,7 @@ public class LoginService implements Runnable {
     }
 
     public static void main(String[] args) {
-        Map<String, String> dummyCredentials = new ConcurrentHashMap<>();
-        dummyCredentials.put("testuser", "password");
-        
-        LoginService service = new LoginService(dummyCredentials);
+        LoginService service = new LoginService();
         new Thread(service).start();
     }
 }
