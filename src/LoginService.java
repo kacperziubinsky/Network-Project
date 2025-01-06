@@ -3,13 +3,18 @@ import java.net.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LoginService implements Runnable {
-    private static final int PORT = 2139;
+    private int port; // Port przydzielany dynamicznie
     private static ConcurrentHashMap<String, Boolean> loggedInUsers = new ConcurrentHashMap<>();
+
+
+    public LoginService(int port) {
+        this.port = port;
+    }
 
     @Override
     public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("LoginService started on port: " + port);
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(() -> handleClient(clientSocket)).start();
@@ -18,8 +23,6 @@ public class LoginService implements Runnable {
             e.printStackTrace();
         }
     }
-
-
 
     public void handleClient(Socket clientSocket){
         try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -49,5 +52,8 @@ public class LoginService implements Runnable {
         }
     }
 
-
+    // Getter dla portu, który może być używany w menedżerze
+    public int getPort() {
+        return port;
+    }
 }

@@ -1,15 +1,17 @@
 import java.io.*;
 import java.net.*;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class RegisterService implements Runnable{
-    private static final int PORT = 2138;
+public class RegisterService implements Runnable {
+    private int port;
+
+    public RegisterService(int port) {
+        this.port = port;
+    }
 
     @Override
     public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("Register running on port " + PORT);
-
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("RegisterSevice started on port: " + port);
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(() -> handleClient(clientSocket)).start();
@@ -18,7 +20,6 @@ public class RegisterService implements Runnable{
             e.printStackTrace();
         }
     }
-
 
     private void handleClient(Socket clientSocket) {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -35,10 +36,10 @@ public class RegisterService implements Runnable{
             String password = parts[2];
 
             DBHandler db = new DBHandler();
-            if(db.createUser(username, password)){
-                output.writeBytes("Registration successful!");
+            if (db.createUser(username, password)) {
+                output.writeBytes("Registration successful!\n");
             } else {
-                output.writeBytes("Error");
+                output.writeBytes("Error\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
