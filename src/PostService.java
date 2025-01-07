@@ -6,25 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PostService implements Runnable {
-    private static final int PORT = 2134;
+public class PostService extends Service {
 
-    @Override
-    public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("PostService running on port " + PORT);
-
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                new Thread(() -> handlePosts(clientSocket)).start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    public PostService(int port){
+        super(port);
     }
 
-    private void handlePosts(Socket clientSocket) {
+    public void handleClient(Socket clientSocket) {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())) {
             String message = input.readLine();

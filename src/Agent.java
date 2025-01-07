@@ -1,35 +1,63 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Agent {
-    private String id;
-    private String version;
-    private Map<String, Integer> services;
+    private Class<? extends Service> serviceType;
+    private List<Service> serviceList;
 
-    public Agent(String id, String version) {
-        this.id = id;
-        this.version = version;
-        this.services = new HashMap<>();
+
+    public Agent(Class<? extends Service> serviceType) {
+        this.serviceType = serviceType;
+        this.serviceList = new ArrayList<>();
     }
 
-    public String getId() {
-        return id;
+    public void startService(int port) {
+        try {
+            Service service = serviceType.getConstructor(int.class).newInstance(port);
+            Thread serviceThread = new Thread(service);
+            serviceThread.start();
+            serviceList.add(service);
+            System.out.println("Started " + serviceType.getSimpleName() + " on port " + port);
+        } catch (Exception e) {
+            System.err.println("Failed to start service: " + e.getMessage());
+        }
     }
 
-    public String getVersion() {
-        return version;
+    public void stopService(int port) {
+        Service serviceToStop = null;
+        for (Service service : serviceList) {
+            if (service.getPort() == port) {
+                service.stopService();
+                serviceToStop = service;
+                System.out.println("Stopped " + serviceType.getSimpleName() + " on port " + port);
+                break;
+            }
+        }
+        if (serviceToStop != null) {
+            serviceList.remove(serviceToStop);
+        } else {
+            System.out.println("No service found on port " + port);
+        }
     }
 
-    // Metoda do uruchamiania usługi i przypisywania portu
-    public void startService(String serviceName, int port) {
-        services.put(serviceName, port);
-        System.out.println("Service " + serviceName + " registered on agent " + id + " with port " + port);
+    public void stopAllServices() {
+        for (Service service : serviceList) {
+            service.stopService();
+            System.out.println("Stopped " + serviceType.getSimpleName() + " on port " + service.getPort());
+        }
+        serviceList.clear();
     }
 
-    // Pobierz port dla danej usługi
-    public Integer getServicePort(String serviceName) {
-        return services.get(serviceName);
+    public List<Integer> getRunningServicesPorts() {
+        List<Integer> ports = new ArrayList<>();
+        for (Service service : serviceList) {
+            ports.add(service.getPort());
+        }
+        return ports;
     }
 
-    // Możesz dodać inne metody do zarządzania agentem, np. zatrzymywanie usług itd.
+    public int getPort(){
+        Service last = serviceList.getLast();
+        return last.getPort();
+    }
 }

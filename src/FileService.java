@@ -2,26 +2,15 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 
-public class FileService implements Runnable {
-    private static final int PORT = 2136;
+public class FileService extends Service {
     private static final String CLIENT_DATA_DIR = "src/Clientdata";
     private static final String SERVER_DATA_DIR = "src/ServerData";
 
-    @Override
-    public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("FileService is running on port " + PORT);
-
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                new Thread(() -> handleFileTransfer(clientSocket)).start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public FileService(int port){
+        super(port);
     }
 
-    private void handleFileTransfer(Socket clientSocket) {
+    public void handleClient(Socket clientSocket) {
         try (
                 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())

@@ -14,7 +14,6 @@ public class DBHandler {
             if (connection == null || connection.isClosed()) {
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-                System.out.println("Połączono z bazą danych!");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,10 +43,8 @@ public class DBHandler {
 
             int rowsAffected = insertStmt.executeUpdate();
             if (rowsAffected > 0) {
-                System.out.println("Użytkownik został pomyślnie zarejestrowany.");
                 return true;
             } else {
-                System.out.println("Błąd podczas rejestracji użytkownika.");
                 return false;
             }
 
@@ -96,10 +93,8 @@ public class DBHandler {
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
-                System.out.println("Post został pomyślnie dodany.");
                 return true;
             } else {
-                System.out.println("Błąd podczas dodawania postu.");
                 return false;
             }
 
@@ -141,7 +136,6 @@ public class DBHandler {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Połączenie z bazą danych zostało zamknięte.");
             }
         } catch (SQLException e) {
             e.printStackTrace();

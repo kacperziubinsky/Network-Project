@@ -1,27 +1,14 @@
 import java.io.*;
 import java.net.*;
 
-public class RegisterService implements Runnable {
-    private int port;
+public class RegisterService extends Service {
 
-    public RegisterService(int port) {
-        this.port = port;
+    public RegisterService(int port){
+        super(port);
+
     }
 
-    @Override
-    public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("RegisterSevice started on port: " + port);
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                new Thread(() -> handleClient(clientSocket)).start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void handleClient(Socket clientSocket) {
+    public void handleClient(Socket clientSocket) {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())) {
 
