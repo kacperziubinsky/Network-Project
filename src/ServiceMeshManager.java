@@ -1,33 +1,63 @@
+import java.util.concurrent.ConcurrentHashMap;
+
 public class ServiceMeshManager {
-    public static void main(String[] args) throws InterruptedException {
+    private final ConcurrentHashMap<String, Agent> serviceAgents = new ConcurrentHashMap<>();
+    private final ApiGateway apiGateway;
+    private final ConsoleInterface consoleInterface;
+
+    public ServiceMeshManager() {
+        this.apiGateway = new ApiGateway(new ManagerServiceAgent(this));
+        this.consoleInterface = new ConsoleInterface();
+    }
+
+    public void initializeServices() {
         Agent loginAgent = new Agent(LoginService.class);
         Agent registerAgent = new Agent(RegisterService.class);
-        Agent postAgnet = new Agent(PostService.class);
+        //Agent postAgent = new Agent(PostService.class);
 
+        serviceAgents.put("LoginService", loginAgent);
+        serviceAgents.put("RegisterService", registerAgent);
+        //serviceAgents.put("PostService", postAgent);
+
+        // Start services
         loginAgent.startService(3001);
-        loginAgent.startService(3002);
-
         registerAgent.startService(2137);
-        registerAgent.startService(2138);
+        //postAgent.startService(2111);
+    }
 
-        postAgnet.startService(2111);
+    public void start() {
+        System.out.println("Initializing services...");
+        initializeServices();
 
+        // Start API Gateway in a separate thread
+        new Thread(() -> {
+            System.out.println("Starting API Gateway...");
+            apiGateway.start();
+        }).start();
 
+        // Give services time to start
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        // Start console interface
+        System.out.println("Starting console interface...");
+        consoleInterface.start();
+    }
 
-        System.out.println("Running services on ports: " + loginAgent.getRunningServicesPorts());
-        System.out.println("Running services on ports: " + registerAgent.getRunningServicesPorts());
+    public Agent getAgentForService(String serviceName) {
+        return serviceAgents.get(serviceName);
+    }
 
+    public void stop() {
+        apiGateway.stop();
+        serviceAgents.values().forEach(Agent::stopAllServices);
+    }
 
-        System.out.println(loginAgent.getPort());
-        loginAgent.stopService(3002);
-        System.out.println(loginAgent.getPort());
-
-        System.out.println("Running services on ports: " + loginAgent.getRunningServicesPorts());
-
-        loginAgent.stopAllServices();
-        registerAgent.stopAllServices();
-        postAgnet.stopAllServices();
-
+    public static void main(String[] args) {
+        ServiceMeshManager manager = new ServiceMeshManager();
+        manager.start();
     }
 }
