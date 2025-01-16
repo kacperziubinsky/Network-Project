@@ -5,7 +5,6 @@ public class RegisterService extends Service {
 
     public RegisterService(int port){
         super(port);
-
     }
 
     public void handleClient(Socket clientSocket) {

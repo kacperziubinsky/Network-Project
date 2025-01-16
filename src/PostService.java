@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,14 +19,14 @@ public class PostService extends Service {
             String message = input.readLine();
             String[] parts = message.split(" ");
             DBHandler dbHandler = new DBHandler();
-            switch(parts[0]) {
-                case "post":
-                    String encodedData = parts[2];
+            switch(parts[1]) {
+                case "add_post":
+                    System.out.println( message );
+                    String encodedData = parts[3];
                     String decodedData = URLDecoder.decode(encodedData, "UTF-8");
-                    String user = parts[1];
+                    String user = parts[2];
                     if (dbHandler.addPost(user, decodedData)) {
                         output.writeBytes("Post successful");
-                        System.out.println("Post successful");
                     } else
                         output.writeBytes("Post failed");
                     break;
@@ -36,7 +37,7 @@ public class PostService extends Service {
                         allPosts.append("ID: ").append(post[0]).append(" Autor: ").append(post[1]).append(" Zawartosc postu: ").append(post[2]).append("## ");
                     }
                     System.out.println(allPosts.toString());
-                    output.writeBytes(allPosts.toString());
+                    output.writeBytes(URLEncoder.encode(allPosts.toString(),"UTF-8"));
                     break;
             }
         } catch (IOException e) {

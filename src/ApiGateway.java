@@ -21,13 +21,6 @@ public class ApiGateway extends Service {
 
             String message = input.readLine();
             String[] parts = message.split(" ");
-            if (parts.length < 3) {
-
-
-                output.writeBytes("Invalid request format\n");
-                return;
-            }
-
 
             String serviceType = parts[0];
             if (!serviceMap.containsKey(serviceType)) {
@@ -35,20 +28,17 @@ public class ApiGateway extends Service {
                 return;
             }
 
-            // Get service port from ServiceMeshManager
             int servicePort = getPort(serviceType);
-
             if (servicePort == -1) {
                 output.writeBytes("Service unavailable\n");
                 return;
             }
 
-            // Forward request to appropriate service
             String response = forwardRequest(message, servicePort);
             output.writeBytes(response + "\n");
 
         } catch (IOException e) {
-            System.err.println("Error handling client request: " + e.getMessage());
+            System.err.println("Błąd podczas obsługi żądania klienta: " + e.getMessage());
         }
     }
 
@@ -71,7 +61,7 @@ public class ApiGateway extends Service {
             String response = fromServiceMesh.readLine();
             return Integer.parseInt(response);
         } catch (IOException | NumberFormatException e) {
-            System.err.println("Error getting service port: " + e.getMessage());
+            System.err.println("Błąd podczas pobierania portu: " + e.getMessage());
             return -1;
         }
     }

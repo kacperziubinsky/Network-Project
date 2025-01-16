@@ -28,7 +28,7 @@ public abstract class Service implements Runnable {
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(getPort())) {
-            System.out.println(getClass().getSimpleName() + " started on port: " + getPort());
+            System.out.println(getClass().getSimpleName() + " rozpoczęto na porcie: " + getPort());
             while (running) {
                 if (serverSocket.isClosed()) break;
                 Socket clientSocket = serverSocket.accept();

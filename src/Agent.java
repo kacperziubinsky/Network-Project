@@ -5,7 +5,6 @@ public class Agent {
     private Class<? extends Service> serviceType;
     private List<Service> serviceList;
 
-
     public Agent(Class<? extends Service> serviceType) {
         this.serviceType = serviceType;
         this.serviceList = new ArrayList<>();
@@ -17,9 +16,9 @@ public class Agent {
             Thread serviceThread = new Thread(service);
             serviceThread.start();
             serviceList.add(service);
-            System.out.println("Started " + serviceType.getSimpleName() + " on port " + port);
+            System.out.println("Rozpoczęto " + serviceType.getSimpleName() + " na porcie " + port);
         } catch (Exception e) {
-            System.err.println("Failed to start service: " + e.getMessage());
+            System.err.println("Błąd podczas łączenia z serwisem: " + e.getMessage());
         }
     }
 
@@ -29,21 +28,21 @@ public class Agent {
             if (service.getPort() == port) {
                 service.stopService();
                 serviceToStop = service;
-                System.out.println("Stopped " + serviceType.getSimpleName() + " on port " + port);
+                System.out.println("Zatrzymano " + serviceType.getSimpleName() + " na porcie " + port);
                 break;
             }
         }
         if (serviceToStop != null) {
             serviceList.remove(serviceToStop);
         } else {
-            System.out.println("No service found on port " + port);
+            System.out.println("Nie znaleziono serwisu na porcie " + port);
         }
     }
 
     public void stopAllServices() {
         for (Service service : serviceList) {
             service.stopService();
-            System.out.println("Stopped " + serviceType.getSimpleName() + " on port " + service.getPort());
+            System.out.println("Zatrzymano " + serviceType.getSimpleName() + " na porcie " + service.getPort());
         }
         serviceList.clear();
     }

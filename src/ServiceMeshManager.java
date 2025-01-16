@@ -6,13 +6,12 @@ public class ServiceMeshManager {
     private static Map<String, List<Integer>> serviceRegistry = new HashMap<>();
 
     public static void main(String[] args) throws InterruptedException {
-        // Initialize services
         Agent loginAgent = new Agent(LoginService.class);
         Agent registerAgent = new Agent(RegisterService.class);
         Agent postAgent = new Agent(PostService.class);
         Agent apiAgent = new Agent(ApiGateway.class);
+        Agent fileAgent = new Agent(FileService.class);
 
-        // Start services and register them
         loginAgent.startService(3001);
         loginAgent.startService(3002);
         apiAgent.startService(3003);
@@ -20,19 +19,19 @@ public class ServiceMeshManager {
         registerAgent.startService(2132);
         registerAgent.startService(2138);
         postAgent.startService(2111);
+        fileAgent.startService(1405);
 
-        // Initialize service registry
         serviceRegistry.put("login", loginAgent.getRunningServicesPorts());
         serviceRegistry.put("register", registerAgent.getRunningServicesPorts());
         serviceRegistry.put("post", postAgent.getRunningServicesPorts());
+        serviceRegistry.put("file", fileAgent.getRunningServicesPorts());
 
-        // Start port discovery service
         startPortDiscoveryService();
     }
 
     private static void startPortDiscoveryService() {
         try (ServerSocket serverSocket = new ServerSocket(2137)) {
-            System.out.println("Port discovery service started on port 2137");
+            System.out.println("Port discovery service rozpoczęty na porcie 2137");
 
             while (true) {
                 try (Socket clientSocket = serverSocket.accept();
@@ -47,7 +46,7 @@ public class ServiceMeshManager {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Port discovery service failed: " + e.getMessage());
+            System.err.println("Usługa wykrywania portów nie powiodła się: " + e.getMessage());
         }
     }
 
@@ -56,7 +55,6 @@ public class ServiceMeshManager {
         if (ports == null || ports.isEmpty()) {
             return -1;
         }
-        // Simple round-robin load balancing
         Random rand = new Random();
         return ports.get(rand.nextInt(ports.size()));
     }
