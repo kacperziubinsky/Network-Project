@@ -12,6 +12,7 @@ public class Client {
             String response = input.readLine();
             System.out.println(response);
 
+
         } catch (IOException e) {
             e.printStackTrace();
         }

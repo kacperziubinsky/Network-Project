@@ -22,9 +22,12 @@ public class ApiGateway extends Service {
             String message = input.readLine();
             String[] parts = message.split(" ");
             if (parts.length < 3) {
+
+
                 output.writeBytes("Invalid request format\n");
                 return;
             }
+
 
             String serviceType = parts[0];
             if (!serviceMap.containsKey(serviceType)) {

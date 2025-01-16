@@ -17,6 +17,7 @@ public class ServiceMeshManager {
         loginAgent.startService(3002);
         apiAgent.startService(3003);
         registerAgent.startService(2139);
+        registerAgent.startService(2132);
         registerAgent.startService(2138);
         postAgent.startService(2111);
 
