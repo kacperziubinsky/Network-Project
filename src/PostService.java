@@ -1,59 +1,46 @@
 import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class PostService implements Runnable {
-    private static final int SERVICE_PORT = 2400;
-    private final List<String> posts;
+public class PostService extends Service {
 
-    public PostService() {
-        this.posts = new CopyOnWriteArrayList<>();
+    public PostService(int port){
+        super(port);
     }
 
-    @Override
-    public void run() {
-        try (ServerSocket serviceSocket = new ServerSocket(SERVICE_PORT)) {
-            System.out.println("Post Service started on port " + SERVICE_PORT);
-
-            while (!Thread.currentThread().isInterrupted()) {
-                Socket clientSocket = serviceSocket.accept();
-                handlePostRequest(clientSocket);
+    public void handleClient(Socket clientSocket) {
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream())) {
+            String message = input.readLine();
+            String[] parts = message.split(" ");
+            DBHandler dbHandler = new DBHandler();
+            switch(parts[0]) {
+                case "post":
+                    String encodedData = parts[2];
+                    String decodedData = URLDecoder.decode(encodedData, "UTF-8");
+                    String user = parts[1];
+                    if (dbHandler.addPost(user, decodedData)) {
+                        output.writeBytes("Post successful");
+                        System.out.println("Post successful");
+                    } else
+                        output.writeBytes("Post failed");
+                    break;
+                case "view_posts":
+                    List<String[]> posty = dbHandler.getPosts();
+                    StringBuilder allPosts = new StringBuilder();
+                    for (String[] post : posty) {
+                        allPosts.append("ID: ").append(post[0]).append(" Autor: ").append(post[1]).append(" Zawartosc postu: ").append(post[2]).append("## ");
+                    }
+                    System.out.println(allPosts.toString());
+                    output.writeBytes(allPosts.toString());
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void handlePostRequest(Socket clientSocket) {
-        try (
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)
-        ) {
-            String postData = in.readLine();
-
-            if (postData.equals("VIEW_POSTS")) {
-                // Send all posts
-                for (String post : posts) {
-                    out.println(post);
-                }
-                out.println("END_OF_POSTS");
-            } else {
-                // Regular post creation
-                String[] parts = postData.split(":", 2);
-                String username = parts[0];
-                String postContent = parts[1];
-
-                posts.add(username + ": " + postContent);
-                out.println("POST_SUCCESS");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        PostService service = new PostService();
-        new Thread(service).start();
     }
 }

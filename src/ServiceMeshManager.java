@@ -1,63 +1,60 @@
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 public class ServiceMeshManager {
-    private final ConcurrentHashMap<String, Agent> serviceAgents = new ConcurrentHashMap<>();
-    private final ApiGateway apiGateway;
-    private final ConsoleInterface consoleInterface;
+    private static Map<String, List<Integer>> serviceRegistry = new HashMap<>();
 
-    public ServiceMeshManager() {
-        this.apiGateway = new ApiGateway(new ManagerServiceAgent(this));
-        this.consoleInterface = new ConsoleInterface();
-    }
-
-    public void initializeServices() {
+    public static void main(String[] args) throws InterruptedException {
+        // Initialize services
         Agent loginAgent = new Agent(LoginService.class);
         Agent registerAgent = new Agent(RegisterService.class);
-        //Agent postAgent = new Agent(PostService.class);
+        Agent postAgent = new Agent(PostService.class);
+        Agent apiAgent = new Agent(ApiGateway.class);
 
-        serviceAgents.put("LoginService", loginAgent);
-        serviceAgents.put("RegisterService", registerAgent);
-        //serviceAgents.put("PostService", postAgent);
-
-        // Start services
+        // Start services and register them
         loginAgent.startService(3001);
+        loginAgent.startService(3002);
+        apiAgent.startService(3003);
         registerAgent.startService(2137);
-        //postAgent.startService(2111);
+        registerAgent.startService(2138);
+        postAgent.startService(2111);
+
+        // Initialize service registry
+        serviceRegistry.put("login", loginAgent.getRunningServicesPorts());
+        serviceRegistry.put("register", registerAgent.getRunningServicesPorts());
+        serviceRegistry.put("post", postAgent.getRunningServicesPorts());
+
+        // Start port discovery service
+        startPortDiscoveryService();
     }
 
-    public void start() {
-        System.out.println("Initializing services...");
-        initializeServices();
+    private static void startPortDiscoveryService() {
+        try (ServerSocket serverSocket = new ServerSocket(2137)) {
+            System.out.println("Port discovery service started on port 2137");
 
-        // Start API Gateway in a separate thread
-        new Thread(() -> {
-            System.out.println("Starting API Gateway...");
-            apiGateway.start();
-        }).start();
+            while (true) {
+                try (Socket clientSocket = serverSocket.accept();
+                     BufferedReader inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                     DataOutputStream outToClient = new DataOutputStream(clientSocket.getOutputStream())) {
 
-        // Give services time to start
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+                    String serviceName = inFromClient.readLine();
+                    int port = getServicePort(serviceName);
+                    outToClient.writeBytes(port + "\n");
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Port discovery service failed: " + e.getMessage());
         }
-
-        // Start console interface
-        System.out.println("Starting console interface...");
-        consoleInterface.start();
     }
 
-    public Agent getAgentForService(String serviceName) {
-        return serviceAgents.get(serviceName);
-    }
-
-    public void stop() {
-        apiGateway.stop();
-        serviceAgents.values().forEach(Agent::stopAllServices);
-    }
-
-    public static void main(String[] args) {
-        ServiceMeshManager manager = new ServiceMeshManager();
-        manager.start();
+    private static int getServicePort(String serviceName) {
+        List<Integer> ports = serviceRegistry.get(serviceName);
+        if (ports == null || ports.isEmpty()) {
+            return -1;
+        }
+        // Simple round-robin load balancing
+        Random rand = new Random();
+        return ports.get(rand.nextInt(ports.size()));
     }
 }

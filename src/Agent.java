@@ -1,50 +1,63 @@
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Agent {
-    private final Class<? extends Service> serviceClass;
-    private final Map<Integer, Service> runningServices;
-    private final ExecutorService executorService;
+    private Class<? extends Service> serviceType;
+    private List<Service> serviceList;
 
-    public Agent(Class<? extends Service> serviceClass) {
-        this.serviceClass = serviceClass;
-        this.runningServices = new ConcurrentHashMap<>();
-        this.executorService = Executors.newCachedThreadPool();
+
+    public Agent(Class<? extends Service> serviceType) {
+        this.serviceType = serviceType;
+        this.serviceList = new ArrayList<>();
     }
 
     public void startService(int port) {
         try {
-            Service service = serviceClass.getDeclaredConstructor(int.class).newInstance(port);
-            runningServices.put(port, service);
-            executorService.submit(service);
+            Service service = serviceType.getConstructor(int.class).newInstance(port);
+            Thread serviceThread = new Thread(service);
+            serviceThread.start();
+            serviceList.add(service);
+            System.out.println("Started " + serviceType.getSimpleName() + " on port " + port);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Failed to start service: " + e.getMessage());
         }
     }
 
     public void stopService(int port) {
-        Service service = runningServices.get(port);
-        if (service != null) {
-            service.stopService();
-            runningServices.remove(port);
+        Service serviceToStop = null;
+        for (Service service : serviceList) {
+            if (service.getPort() == port) {
+                service.stopService();
+                serviceToStop = service;
+                System.out.println("Stopped " + serviceType.getSimpleName() + " on port " + port);
+                break;
+            }
+        }
+        if (serviceToStop != null) {
+            serviceList.remove(serviceToStop);
+        } else {
+            System.out.println("No service found on port " + port);
         }
     }
 
     public void stopAllServices() {
-        for (Integer port : new ArrayList<>(runningServices.keySet())) {
-            stopService(port);
+        for (Service service : serviceList) {
+            service.stopService();
+            System.out.println("Stopped " + serviceType.getSimpleName() + " on port " + service.getPort());
         }
-        executorService.shutdown();
+        serviceList.clear();
     }
 
     public List<Integer> getRunningServicesPorts() {
-        return new ArrayList<>(runningServices.keySet());
+        List<Integer> ports = new ArrayList<>();
+        for (Service service : serviceList) {
+            ports.add(service.getPort());
+        }
+        return ports;
     }
 
-    public int getPort() {
-        if (!runningServices.isEmpty()) {
-            return runningServices.keySet().iterator().next();
-        }
-        return -1;
+    public int getPort(){
+        Service last = serviceList.getLast();
+        return last.getPort();
     }
 }
