@@ -22,6 +22,7 @@ public abstract class Service implements Runnable {
         return running;
     }
 
+
     public abstract void handleClient(Socket clientSocket);
 
     @Override
