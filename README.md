@@ -32,6 +32,10 @@ Port discovery service started on port 2137
 PostService started on port: 2111
 ```
 
+### Client Login
+
+```Login successful
+```
 
 
 ## Sources
