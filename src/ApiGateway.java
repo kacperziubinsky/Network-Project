@@ -21,13 +21,15 @@ public class ApiGateway extends Service {
 
             String message = input.readLine();
             String[] parts = message.split(" ");
+            if (parts.length < 3) {
 
-            if (parts.length < 4) {
+
                 output.writeBytes("Invalid request format\n");
                 return;
             }
 
-            String serviceType = parts[1];
+
+            String serviceType = parts[0];
             if (!serviceMap.containsKey(serviceType)) {
                 output.writeBytes("Unknown service: " + serviceType + "\n");
                 return;
@@ -35,6 +37,7 @@ public class ApiGateway extends Service {
 
             // Get service port from ServiceMeshManager
             int servicePort = getPort(serviceType);
+
             if (servicePort == -1) {
                 output.writeBytes("Service unavailable\n");
                 return;

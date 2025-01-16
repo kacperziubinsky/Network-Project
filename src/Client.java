@@ -8,7 +8,7 @@ public class Client {
              DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
 
 
-            output.writeBytes("view_posts\n");
+            output.writeBytes("login admin admin\n");
             String response = input.readLine();
             System.out.println(response);
 

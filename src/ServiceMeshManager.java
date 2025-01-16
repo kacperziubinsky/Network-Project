@@ -16,7 +16,8 @@ public class ServiceMeshManager {
         loginAgent.startService(3001);
         loginAgent.startService(3002);
         apiAgent.startService(3003);
-        registerAgent.startService(2137);
+        registerAgent.startService(2139);
+        registerAgent.startService(2132);
         registerAgent.startService(2138);
         postAgent.startService(2111);
 
@@ -39,6 +40,8 @@ public class ServiceMeshManager {
                      DataOutputStream outToClient = new DataOutputStream(clientSocket.getOutputStream())) {
 
                     String serviceName = inFromClient.readLine();
+
+                    System.out.println(serviceName);
                     int port = getServicePort(serviceName);
                     outToClient.writeBytes(port + "\n");
                 }
