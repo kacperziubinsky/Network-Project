@@ -4,10 +4,13 @@ import java.net.Socket;
 
 public abstract class Service implements Runnable {
     private int port;
-    private volatile boolean running = true;
+    private volatile boolean running;
+    private int requestCount;
 
     public Service(int port) {
         this.port = port;
+        this.running = true;
+        this.requestCount = 0;
     }
 
     public int getPort() {
@@ -22,7 +25,13 @@ public abstract class Service implements Runnable {
         return running;
     }
 
+    public synchronized void incrementRequestCount() {
+        requestCount++;
+    }
 
+    public synchronized int getRequestCount() {
+        return requestCount;
+    }
     public abstract void handleClient(Socket clientSocket);
 
     @Override

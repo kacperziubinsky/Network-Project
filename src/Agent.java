@@ -59,4 +59,16 @@ public class Agent {
         Service last = serviceList.getLast();
         return last.getPort();
     }
+
+    public int getTotalRequestsHandled() {
+        int totalRequests = 0;
+        for (Service service : serviceList) {
+            totalRequests += service.getRequestCount();
+        }
+        return totalRequests;
+    }
+
+    public int getRunningServiceCount() {
+        return serviceList.size();
+    }
 }
