@@ -55,11 +55,6 @@ public class Agent {
         return ports;
     }
 
-    public int getPort(){
-        Service last = serviceList.getLast();
-        return last.getPort();
-    }
-
     public int getTotalRequestsHandled() {
         int totalRequests = 0;
         for (Service service : serviceList) {
@@ -70,5 +65,13 @@ public class Agent {
 
     public int getRunningServiceCount() {
         return serviceList.size();
+    }
+
+    public int getRequestsInTimeFrame(int minutes) {
+        int recentRequests = 0;
+        for (Service service : serviceList) {
+            recentRequests += service.getRequestsInLastTwoMinutes(minutes);
+        }
+        return recentRequests;
     }
 }

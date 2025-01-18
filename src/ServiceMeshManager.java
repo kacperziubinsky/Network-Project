@@ -10,12 +10,18 @@ public class ServiceMeshManager {
     private static Agent postAgent = new Agent(PostService.class);
     private static Agent fileAgent = new Agent(FileService.class);
     private static Agent ApiGateway = new Agent(ApiGateway.class);
+
     private static final String LOG_FILE = "ManagerLogger.log";
+
+    private static int minimumRequestsThreshold = 50;
+    private static int monitoringTimePeriodMinutes = 2;
 
     public static void main(String[] args) throws InterruptedException {
         initializeLogger();
 
         ApiGateway.startService(3003);
+        loginAgent.startService(2231);
+        loginAgent.startService(2341);
 
         serviceRegistry.put("login", loginAgent.getRunningServicesPorts());
         serviceRegistry.put("register", registerAgent.getRunningServicesPorts());
@@ -83,6 +89,7 @@ public class ServiceMeshManager {
 
                 for (Map.Entry<String, List<Integer>> entry : serviceRegistry.entrySet()) {
                     String serviceName = entry.getKey();
+                    List<Integer> ports = entry.getValue();
 
                     Agent agent = getAgentByName(serviceName);
                     if (agent != null) {
@@ -92,12 +99,19 @@ public class ServiceMeshManager {
                         String logEntry = String.format("[%s] :: [Uruchomione instancje: %d] [Obsługiwane żądania: %d]",
                                 getCurrentTimestamp(), runningServices, totalRequests);
                         logBuilder.append("Usługa: ").append(serviceName).append(" ").append(logEntry).append("\n");
+
+                        int requestsInTimeFrame = agent.getRequestsInTimeFrame(monitoringTimePeriodMinutes);
+                        if (runningServices > 1 && requestsInTimeFrame < minimumRequestsThreshold) {
+                            int portToStop = ports.remove(ports.size() - 1);
+                            agent.stopService(portToStop);
+                            log("Zatrzymano instancję usługi " + serviceName + " na porcie " + portToStop);
+                        }
                     }
                 }
 
                 log(logBuilder.toString().trim());
             }
-        }, 0, 20000);
+        }, 0, 5000);
     }
 
     private static Agent getAgentByName(String serviceName) {
