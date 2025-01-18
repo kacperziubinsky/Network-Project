@@ -12,7 +12,7 @@ Service Mesh Manager enables easy scaling of services. In our project, we use Ja
 
 ## Showcase
 
-![image](https://github.com/user-attachments/assets/5770a4ef-cb09-473b-89ff-bbb570addd33)
+![Schemat (2)](https://github.com/user-attachments/assets/c44240bc-7cd5-40d5-bcb6-21a1b308983d)
 
 ### ServiceMesh Basic Configuration
 This is a console content:
