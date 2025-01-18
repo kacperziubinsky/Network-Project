@@ -14,7 +14,7 @@ Service Mesh Manager enables easy scaling of services. In our project, we use Ja
 
 
 ### ServiceMesh Basic Configuration
-
+This is a console content:
 ```LoginService started on port: 3001
 Started LoginService on port 3001
 Started LoginService on port 3002
@@ -33,9 +33,20 @@ PostService started on port: 2111
 ```
 
 ### Client Login
-
+#### User login for admin account.
 ```
-Login successful
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Pliki
+5. Wyjście
+Wybierz opcje (1-4): 1
+Podaj login: admin
+Podaj hasło: admin
+
+Odpowiedź: Login successful
 ```
 
 
