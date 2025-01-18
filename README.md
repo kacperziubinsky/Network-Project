@@ -82,7 +82,7 @@ Musisz być zalogowany, aby wybrać inne opcje.
 
 ```
 
-####If User is logged in, he or she can select every option.
+#### If User is logged in, he or she can select every option.
 ```
 
 === Projekt Service Mesh Console ===
