@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/b350d020-bcb3-44c6-9a85-74e0bf3a4542)# Simple Service Mesh Menager - Network Technology Project
+# Simple Service Mesh Menager - Network Technology Project
 Service Mesh Manager enables easy scaling of services. In our project, we use Java to create basic services. Initially, we built a basic CNAPP. In this basic setup, our API Gateway connected directly to the services and started all microservices. Once our CNAPP was completed, we began building the Service Mesh.
 
 ## Authors
