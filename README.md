@@ -203,5 +203,43 @@ Wybierz opcje (1-4):
 
 ```
 
+#### There is also 1 option, that User cannot register again, when he/she is logged in.
+
+```
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Status
+5. Wyjście
+Wybierz opcje (1-4): 4
+
+=== Status Użytkownika ===
+Nazwa użytkownika: admin
+Status: Zalogowany
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Status
+5. Wyjście
+Wybierz opcje (1-4): 2
+
+Błąd: Jesteś już zalogowany. Wyloguj się, aby móc się zarejestrować.
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Status
+5. Wyjście
+Wybierz opcje (1-4):
+
+```
+
+
+
 ## Sources
 This app is inspired by [@sambrosz](https://github.com/sambrosz/SSMMP-a-simple-protocol-for-Service-Mesh-management) lectures. 
