@@ -13,6 +13,7 @@ public class ApiGateway extends Service {
         serviceMap.put("login", "LoginService");
         serviceMap.put("post", "PostService");
         serviceMap.put("register", "RegisterService");
+        serviceMap.put("file", "FileService");
     }
 
     public void handleClient(Socket clientSocket) {

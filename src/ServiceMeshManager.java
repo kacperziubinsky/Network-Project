@@ -12,6 +12,7 @@ public class ServiceMeshManager {
     private static Agent ApiGateway = new Agent(ApiGateway.class);
 
     private static final String LOG_FILE = "ManagerLogger.log";
+    private static final int LogPeriod = 5000;
 
     private static int minimumRequestsThreshold = 50;
     private static int monitoringTimePeriodMinutes = 2;
@@ -111,7 +112,7 @@ public class ServiceMeshManager {
 
                 log(logBuilder.toString().trim());
             }
-        }, 0, 5000);
+        }, 0, LogPeriod);
     }
 
     private static Agent getAgentByName(String serviceName) {

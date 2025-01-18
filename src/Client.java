@@ -29,7 +29,7 @@ public class Client {
                     handlePosts();
                     break;
                 case 4:
-                    handleFiles();
+                    displayStatus();
                     break;
                 case 5:
                     System.out.println("Kończenie programu...");
@@ -45,7 +45,7 @@ public class Client {
         System.out.println("1. Logowanie");
         System.out.println("2. Rejestracja");
         System.out.println("3. Posty");
-        System.out.println("4. Pliki");
+        System.out.println("4. Status");
         System.out.println("5. Wyjście");
         System.out.print("Wybierz opcje (1-4): ");
     }
@@ -74,6 +74,11 @@ public class Client {
     }
 
     private void handleRegister() {
+        if (isUserLoggedIn()) {
+            System.out.println("\nBłąd: Jesteś już zalogowany. Wyloguj się, aby móc się zarejestrować.");
+            return;
+        }
+
         System.out.print("Podaj login do rejestracji: ");
         String username = scanner.nextLine();
         System.out.print("Podaj hasło do rejestracji: ");
@@ -111,7 +116,7 @@ public class Client {
                     } catch (UnsupportedEncodingException e) {
                         throw new RuntimeException(e);
                     }
-                    String createResponse = sendRequest("post add_post " + loggedInUser + content);
+                    String createResponse = sendRequest("post add_post " + loggedInUser + " " + content);
                     System.out.println("\nResponse: " + createResponse);
                     break;
                 case 3:
@@ -174,6 +179,15 @@ public class Client {
         }
     }
 
+    private void displayStatus() {
+        System.out.println("\n=== Status Użytkownika ===");
+        if (isUserLoggedIn()) {
+            System.out.println("Nazwa użytkownika: " + loggedInUser);
+            System.out.println("Status: Zalogowany");
+        } else {
+            System.out.println("Nie jesteś zalogowany.");
+        }
+    }
 
     private boolean isUserLoggedIn() {
         return loggedInUser != null;
@@ -181,20 +195,25 @@ public class Client {
 
     private void displayPosts(String postsResponse) {
         if (postsResponse == null || postsResponse.isEmpty()) {
-            System.out.println("\nBrak postów do wyswietlania.");
-        } else {
-            System.out.println("\nPosty:");
-            try {
-                postsResponse = URLDecoder.decode(postsResponse, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-            String[] posts = postsResponse.split("## ");
-            for (String post : posts) {
-                System.out.println("- " + post);
+            System.out.println("\nBrak postów do wyświetlania.");
+            return;
+        }
+        try {
+            postsResponse = URLDecoder.decode(postsResponse, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Błąd dekodowania odpowiedzi od serwera: " + e.getMessage());
+            return;
+        }
+
+        String[] posts = postsResponse.split("## ");
+        System.out.println("\nPosty:");
+        for (String post : posts) {
+            if (!post.trim().isEmpty()) {
+                System.out.println("- " + post.trim());
             }
         }
     }
+
 
     private String sendRequest(String request) {
         try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
