@@ -49,6 +49,159 @@ Podaj hasło: admin
 Odpowiedź: Login successful
 ```
 
+### Client Register
+#### User register for account.
+```
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Pliki
+5. Wyjście
+Wybierz opcje (1-4): 2
+Podaj login do rejestracji: wyspa
+Podaj hasło do rejestracji: wyspa
+
+Odpowiedź: Registration successful!
+```
+
+### Client Posts
+#### If User isn't logged in, he or she cannot select the option related to adding posts.
+```
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Pliki
+5. Wyjście
+Wybierz opcje (1-4): 3
+
+Musisz być zalogowany, aby wybrać inne opcje.
+
+```
+
+####If User is logged in, he or she can select every option.
+```
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Pliki
+5. Wyjście
+Wybierz opcje (1-4): 3
+
+=== Menu Postów ===
+1. Zobacz wszystkie posty
+2. Stwórz nowy post
+3. Powrót do menu
+Wybierz opcje (1-3):
+
+```
+#### Client wants to write post.
+
+```
+=== Menu Postów ===
+1. Zobacz wszystkie posty
+2. Stwórz nowy post
+3. Powrót do menu
+Wybierz opcje (1-3): 2
+Napisz post: To jest post
+
+Response: Post successful
+
+=== Menu Postów ===
+1. Zobacz wszystkie posty
+2. Stwórz nowy post
+3. Powrót do menu
+Wybierz opcje (1-3): 
+
+```
+#### Client wants to show posts.
+
+```
+
+=== Menu Postów ===
+1. Zobacz wszystkie posty
+2. Stwórz nowy post
+3. Powrót do menu
+Wybierz opcje (1-3): 1
+
+Posty:
+- ID: 1 Autor: a Zawartosc postu: b
+- ID: 2 Autor: dzban Zawartosc postu: sfdfgdfhj
+- ID: 3 Autor: dzban Zawartosc postu: I LOVE SIECI
+- ID: 6 Autor: admin Zawartosc postu: sigma
+- ID: 7 Autor: admin Zawartosc postu: costam test sigma rel
+- ID: 9 Autor: skkf Zawartosc postu: okej
+- ID: 12 Autor: admin Zawartosc postu: bvcfcfkjgvb
+- ID: 17 Autor: oskar Zawartosc postu: elo elo
+- ID: 18 Autor: adminTo+jest+post Zawartosc postu:
+- ID: 19 Autor: a Zawartosc postu: ala ma kota
+- ID: 20 Autor: a Zawartosc postu: To jest post
+
+=== Menu Postów ===
+1. Zobacz wszystkie posty
+2. Stwórz nowy post
+3. Powrót do menu
+Wybierz opcje (1-3):
+
+```
+
+### Client Status
+#### Client wants to see is he/she logged in or not.
+Not logged in
+
+```
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Status
+5. Wyjście
+Wybierz opcje (1-4): 4
+
+=== Status Użytkownika ===
+Nie jesteś zalogowany.
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Status
+5. Wyjście
+Wybierz opcje (1-4):
+
+```
+
+Logged in
+
+```
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Status
+5. Wyjście
+Wybierz opcje (1-4): 4
+
+=== Status Użytkownika ===
+Nazwa użytkownika: admin
+Status: Zalogowany
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Status
+5. Wyjście
+Wybierz opcje (1-4):
+
+```
 
 ## Sources
 This app is inspired by [@sambrosz](https://github.com/sambrosz/SSMMP-a-simple-protocol-for-Service-Mesh-management) lectures. 
