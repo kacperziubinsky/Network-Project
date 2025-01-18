@@ -1,4 +1,4 @@
-# Simple Service Mesh Menager - Network Technology Project
+![image](https://github.com/user-attachments/assets/b350d020-bcb3-44c6-9a85-74e0bf3a4542)# Simple Service Mesh Menager - Network Technology Project
 Service Mesh Manager enables easy scaling of services. In our project, we use Java to create basic services. Initially, we built a basic CNAPP. In this basic setup, our API Gateway connected directly to the services and started all microservices. Once our CNAPP was completed, we began building the Service Mesh.
 
 ## Authors
@@ -14,7 +14,7 @@ Service Mesh Manager enables easy scaling of services. In our project, we use Ja
 
 
 ### ServiceMesh Basic Configuration
-
+This is a console content:
 ```LoginService started on port: 3001
 Started LoginService on port 3001
 Started LoginService on port 3002
@@ -33,9 +33,20 @@ PostService started on port: 2111
 ```
 
 ### Client Login
-
+#### User login for admin account.
 ```
-Login successful
+
+=== Projekt Service Mesh Console ===
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Pliki
+5. Wyjście
+Wybierz opcje (1-4): 1
+Podaj login: admin
+Podaj hasło: admin
+
+Odpowiedź: Login successful
 ```
 
 
