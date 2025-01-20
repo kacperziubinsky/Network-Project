@@ -41,15 +41,15 @@ Network-Project/
 
 ## Key Directories and Files
 
-- src/: Contains the source code for the project.
-  -ApiGateway.java: Handles routing and forwarding client requests to appropriate services.
-  -ServiceMeshManager.java: Central component managing the Service Mesh.
-  -DBHandler.java: Manages database interactions.
-  -Agent.java: Represents an individual microservice.
-  -FileService.java, LoginService.java, PostService.java, RegisterService.java: Implement various microservice functionalities.
--mysql-connector-j-9.1.0.jar: JDBC driver for MySQL database connections.
--README.md: Project description and credits.
--ManagerLogger.log: Log file for tracking application events.
+* src/: Contains the source code for the project.
+  ApiGateway.java: Handles routing and forwarding client requests to appropriate services.
+  ServiceMeshManager.java: Central component managing the Service Mesh.
+  DBHandler.java: Manages database interactions.
+  Agent.java: Represents an individual microservice.
+  FileService.java, LoginService.java, PostService.java, RegisterService.java: Implement various microservice functionalities.
+* mysql-connector-j-9.1.0.jar: JDBC driver for MySQL database connections.
+* README.md: Project description and credits.
+* ManagerLogger.log: Log file for tracking application events.
 
 
 ## Showcase
