@@ -21,27 +21,23 @@ public class PostService extends Service {
             DBHandler dbHandler = new DBHandler();
             switch(parts[1]) {
                 case "add_post":
-                    System.out.println(message);
+                    System.out.println( message );
+                    String encodedData = parts[3];
+                    String decodedData = URLDecoder.decode(encodedData, "UTF-8");
                     String user = parts[2];
-                    String content = parts[3];
-                    String decodedData = URLDecoder.decode(content, "UTF-8"); // Dekodowanie
-                    System.out.println(user + " : " + decodedData);
-
                     if (dbHandler.addPost(user, decodedData)) {
                         output.writeBytes("Post successful");
-                    } else {
+                    } else
                         output.writeBytes("Post failed");
-                    }
-
                     break;
-
                 case "view_posts":
                     List<String[]> posty = dbHandler.getPosts();
                     StringBuilder allPosts = new StringBuilder();
                     for (String[] post : posty) {
                         allPosts.append("ID: ").append(post[0]).append(" Autor: ").append(post[1]).append(" Zawartosc postu: ").append(post[2]).append("## ");
                     }
-                    output.writeBytes(URLEncoder.encode(allPosts.toString(), "UTF-8"));
+                    System.out.println(allPosts.toString());
+                    output.writeBytes(URLEncoder.encode(allPosts.toString(),"UTF-8"));
                     break;
             }
         } catch (IOException e) {

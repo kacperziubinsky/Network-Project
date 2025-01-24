@@ -23,20 +23,22 @@ public class FileService extends Service {
                 return;
             }
 
-            String command = parts[0];
-            String username = parts[1];
-            String filename = parts[2];
+            String command = parts[0] + " " + parts[1];
+            String username = parts[2];
+            String filename = parts[3];
             File clientUserDir = new File(CLIENT_DATA_DIR, username);
             File serverUserDir = new File(SERVER_DATA_DIR, username);
 
             if (!clientUserDir.exists()) clientUserDir.mkdirs();
             if (!serverUserDir.exists()) serverUserDir.mkdirs();
 
-            switch (command) {
-                case "send":
+
+            switch (command.trim()) {
+                case "file":
+                case "file send":
                     sendFile(username, filename, output);
                     break;
-                case "rec":
+                case "file rec":
                     receiveFile(username, filename, output);
                     break;
                 default:

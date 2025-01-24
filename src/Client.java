@@ -29,9 +29,12 @@ public class Client {
                     handlePosts();
                     break;
                 case 4:
-                    displayStatus();
+                    handleFiles();  // New option for file handling
                     break;
                 case 5:
+                    displayStatus();
+                    break;
+                case 6:
                     System.out.println("Kończenie programu...");
                     return;
                 default:
@@ -45,11 +48,11 @@ public class Client {
         System.out.println("1. Logowanie");
         System.out.println("2. Rejestracja");
         System.out.println("3. Posty");
-        System.out.println("4. Status");
-        System.out.println("5. Wyjście");
-        System.out.print("Wybierz opcje (1-4): ");
+        System.out.println("4. Pliki");  // Updated menu option
+        System.out.println("5. Status");
+        System.out.println("6. Wyjście");
+        System.out.print("Wybierz opcje (1-6): ");  // Updated range
     }
-
     private int getUserChoice() {
         try {
             return Integer.parseInt(scanner.nextLine());
@@ -127,6 +130,7 @@ public class Client {
         }
     }
 
+
     private void handleFiles() {
         if (!isUserLoggedIn()) {
             System.out.println("\nMusisz być zalogowany, aby wybrać inne opcje.");
@@ -163,7 +167,7 @@ public class Client {
 
     private void sendFileToServer(String username, String filename) {
         try {
-            String response = sendRequest("send " + username + " " + filename);
+            String response = sendRequest("file send " + username + " " + filename);
             System.out.println("\nSerwer odpowiedział: " + response);
         } catch (Exception e) {
             System.out.println("Błąd podczas wysyłania pliku: " + e.getMessage());
@@ -172,7 +176,7 @@ public class Client {
 
     private void receiveFileFromServer(String username, String filename) {
         try {
-            String response = sendRequest("rec " + username + " " + filename);
+            String response = sendRequest("file rec " + username + " " + filename);
             System.out.println("\nSerwer odpowiedział: " + response);
         } catch (Exception e) {
             System.out.println("Błąd podczas pobierania pliku: " + e.getMessage());
@@ -226,6 +230,7 @@ public class Client {
             return "Error: Brak połączenia z serwisem. Upewnij się, że serwer jest włączony.";
         }
     }
+
 
     public static void main(String[] args) {
         Client client = new Client();
