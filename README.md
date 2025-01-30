@@ -41,15 +41,23 @@ Network-Project/
 
 ## Key Directories and Files
 
-* src/: Contains the source code for the project.
-  * ApiGateway.java: Handles routing and forwarding client requests to appropriate services.
-  * ServiceMeshManager.java: Central component managing the Service Mesh.
-  * DBHandler.java: Manages database interactions.
-  * Agent.java: Represents an individual microservice.
-  * FileService.java, LoginService.java, PostService.java, RegisterService.java: Implement various microservice functionalities.
-* mysql-connector-j-9.1.0.jar: JDBC driver for MySQL database connections.
-* README.md: Project description and credits.
-* ManagerLogger.log: Log file for tracking application events.
+* src/: Contains the source code for the project.  
+  * ApiGateway.java: Handles routing and forwarding client requests to appropriate services.  
+  * ServiceMeshManager.java: Central component managing the Service Mesh infrastructure.  
+  * DBHandler.java: Manages database connections and SQL operations.  
+  * Agent.java: Represents an individual microservice instance in the mesh network.  
+  * FileService.java: Manages client-server file transfers using dedicated user directories:  
+    - Uploads to server storage (`src/ServerData/[username]`)  
+    - Downloads from server to client (`src/Clientdata/[username]`)  
+    - Supported commands:  
+      `file send <username> <filename>` - Transfers file to server  
+      `file rec <username> <filename>` - Retrieves file from server  
+    - (Files automatically deleted from source after successful transfer)  
+  * LoginService.java: Handles user authentication and session management  
+  * PostService.java: Manages blog post creation, storage, and retrieval  
+  * RegisterService.java: Handles new user registration and credential validation
+    
+## Showcase
 
 
 ## Showcase
@@ -281,25 +289,7 @@ Błąd: Jesteś już zalogowany. Wyloguj się, aby móc się zarejestrować.
 Wybierz opcje (1-4):
 
 ```
-## Key Directories and Files
 
-* src/: Contains the source code for the project.  
-  * ApiGateway.java: Handles routing and forwarding client requests to appropriate services.  
-  * ServiceMeshManager.java: Central component managing the Service Mesh infrastructure.  
-  * DBHandler.java: Manages database connections and SQL operations.  
-  * Agent.java: Represents an individual microservice instance in the mesh network.  
-  * FileService.java: Manages client-server file transfers using dedicated user directories:  
-    - Uploads to server storage (`src/ServerData/[username]`)  
-    - Downloads from server to client (`src/Clientdata/[username]`)  
-    - Supported commands:  
-      `file send <username> <filename>` - Transfers file to server  
-      `file rec <username> <filename>` - Retrieves file from server  
-    - (Files automatically deleted from source after successful transfer)  
-  * LoginService.java: Handles user authentication and session management  
-  * PostService.java: Manages blog post creation, storage, and retrieval  
-  * RegisterService.java: Handles new user registration and credential validation
-    
-## Showcase
 
 ### Client Files
 #### Uploading a file to the server
