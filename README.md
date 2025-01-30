@@ -296,11 +296,14 @@ Wybierz opcje (1-4):
       - `file rec <username> <filename>` - Fetch file from server to client  
     - Files are deleted from source after successful transfer  
   * LoginService.java, PostService.java, RegisterService.java: Implement various microservice functionalities.  
-
+```
 ## Showcase
+```
 
+```
 ### Client Files
 #### Uploading a file to the server
+```
 === Projekt Service Mesh Console ===
 
 Logowanie
@@ -328,9 +331,10 @@ Podaj nazwę pliku do wysłania: example.txt
 
 Serwer odpowiedział: File sent successfully
 
-Copy
+```
 
 #### Downloading a file from the server
+```
 === Projekt Service Mesh Console ===
 
 Logowanie
@@ -360,7 +364,9 @@ Serwer odpowiedział: File received successfully
 
 Copy
 
+```
 #### Error handling (file not found)
+```
 ```
 #### ManagerLogger presentation
 
