@@ -298,34 +298,23 @@ Wybierz opcje (1-4):
   * LoginService.java, PostService.java, RegisterService.java: Implement various microservice functionalities.  
 ```
 ## Showcase
-```
 
-```
 ### Client Files
 #### Uploading a file to the server
 ```
 === Projekt Service Mesh Console ===
-
-Logowanie
-
-Rejestracja
-
-Posty
-
-Pliki
-
-Status
-
-Wyjście
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Pliki
+5. Status
+6. Wyjście
 Wybierz opcje (1-6): 4
 
 === Menu Plików ===
-
-Wyślij plik na serwer
-
-Pobierz plik z serwera
-
-Powrót do menu
+1. Wyślij plik na serwer
+2. Pobierz plik z serwera
+3. Powrót do menu
 Wybierz opcje (1-3): 1
 Podaj nazwę pliku do wysłania: example.txt
 
@@ -336,37 +325,25 @@ Serwer odpowiedział: File sent successfully
 #### Downloading a file from the server
 ```
 === Projekt Service Mesh Console ===
-
-Logowanie
-
-Rejestracja
-
-Posty
-
-Pliki
-
-Status
-
-Wyjście
+1. Logowanie
+2. Rejestracja
+3. Posty
+4. Pliki
+5. Status
+6. Wyjście
 Wybierz opcje (1-6): 4
 
 === Menu Plików ===
 
-Wyślij plik na serwer
-
-Pobierz plik z serwera
-
-Powrót do menu
+1. Wyślij plik na serwer
+2. Pobierz plik z serwera
+3. Powrót do menu
 Wybierz opcje (1-3): 2
 Podaj nazwę pliku do pobrania: example.txt
 
 Serwer odpowiedział: File received successfully
 
-Copy
 
-```
-#### Error handling (file not found)
-```
 ```
 #### ManagerLogger presentation
 
