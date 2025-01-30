@@ -282,21 +282,23 @@ Wybierz opcje (1-4):
 
 ```
 ## Key Directories and Files
-```
+
 * src/: Contains the source code for the project.  
   * ApiGateway.java: Handles routing and forwarding client requests to appropriate services.  
-  * ServiceMeshManager.java: Central component managing the Service Mesh.  
-  * DBHandler.java: Manages database interactions.  
-  * Agent.java: Represents an individual microservice.  
-  * **FileService.java**: Manages file transfer operations between clients and the server. Key functionalities:  
-    - Upload files to server storage (`src/ServerData/[username]`)  
-    - Download files from server to client (`src/Clientdata/[username]`)  
-    - Command structure:  
-      - `file send <username> <filename>` - Transfer file from client to server  
-      - `file rec <username> <filename>` - Fetch file from server to client  
-    - Files are deleted from source after successful transfer  
-  * LoginService.java, PostService.java, RegisterService.java: Implement various microservice functionalities.  
-```
+  * ServiceMeshManager.java: Central component managing the Service Mesh infrastructure.  
+  * DBHandler.java: Manages database connections and SQL operations.  
+  * Agent.java: Represents an individual microservice instance in the mesh network.  
+  * FileService.java: Manages client-server file transfers using dedicated user directories:  
+    - Uploads to server storage (`src/ServerData/[username]`)  
+    - Downloads from server to client (`src/Clientdata/[username]`)  
+    - Supported commands:  
+      `file send <username> <filename>` - Transfers file to server  
+      `file rec <username> <filename>` - Retrieves file from server  
+    - (Files automatically deleted from source after successful transfer)  
+  * LoginService.java: Handles user authentication and session management  
+  * PostService.java: Manages blog post creation, storage, and retrieval  
+  * RegisterService.java: Handles new user registration and credential validation
+    
 ## Showcase
 
 ### Client Files
