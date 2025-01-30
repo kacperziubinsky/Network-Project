@@ -281,11 +281,90 @@ Błąd: Jesteś już zalogowany. Wyloguj się, aby móc się zarejestrować.
 Wybierz opcje (1-4):
 
 ```
+## Key Directories and Files
+```
+* src/: Contains the source code for the project.  
+  * ApiGateway.java: Handles routing and forwarding client requests to appropriate services.  
+  * ServiceMeshManager.java: Central component managing the Service Mesh.  
+  * DBHandler.java: Manages database interactions.  
+  * Agent.java: Represents an individual microservice.  
+  * **FileService.java**: Manages file transfer operations between clients and the server. Key functionalities:  
+    - Upload files to server storage (`src/ServerData/[username]`)  
+    - Download files from server to client (`src/Clientdata/[username]`)  
+    - Command structure:  
+      - `file send <username> <filename>` - Transfer file from client to server  
+      - `file rec <username> <filename>` - Fetch file from server to client  
+    - Files are deleted from source after successful transfer  
+  * LoginService.java, PostService.java, RegisterService.java: Implement various microservice functionalities.  
 
+## Showcase
+
+### Client Files
+#### Uploading a file to the server
+=== Projekt Service Mesh Console ===
+
+Logowanie
+
+Rejestracja
+
+Posty
+
+Pliki
+
+Status
+
+Wyjście
+Wybierz opcje (1-6): 4
+
+=== Menu Plików ===
+
+Wyślij plik na serwer
+
+Pobierz plik z serwera
+
+Powrót do menu
+Wybierz opcje (1-3): 1
+Podaj nazwę pliku do wysłania: example.txt
+
+Serwer odpowiedział: File sent successfully
+
+Copy
+
+#### Downloading a file from the server
+=== Projekt Service Mesh Console ===
+
+Logowanie
+
+Rejestracja
+
+Posty
+
+Pliki
+
+Status
+
+Wyjście
+Wybierz opcje (1-6): 4
+
+=== Menu Plików ===
+
+Wyślij plik na serwer
+
+Pobierz plik z serwera
+
+Powrót do menu
+Wybierz opcje (1-3): 2
+Podaj nazwę pliku do pobrania: example.txt
+
+Serwer odpowiedział: File received successfully
+
+Copy
+
+#### Error handling (file not found)
+```
 #### ManagerLogger presentation
 
 ```
-
 2025-01-18 21:16:47 :: Zatrzymano instancję usługi login na porcie 2341
 2025-01-18 21:16:47 :: Port discovery service rozpoczęty na porcie 2137
 2025-01-18 21:16:47 :: Usługa: file [2025-01-18 21:16:47] :: [Uruchomione instancje: 0] [Obsługiwane żądania: 0]
